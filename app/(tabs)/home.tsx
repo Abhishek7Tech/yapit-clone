@@ -5,7 +5,9 @@ import { Image } from "expo-image";
 import StreakDays from "../utils/streak";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
+import Feather from '@expo/vector-icons/Feather';
 export default function HomeTab() {
+  const today = new Date().getDay();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headingView}>
@@ -53,11 +55,12 @@ export default function HomeTab() {
           </View>
           <View style={styles.streakDaysContainer}>
             <FlatList
-            style={{flexDirection: "row"}}
               data={StreakDays}
+              horizontal={true}
+              contentContainerStyle={{justifyContent: "space-between", alignItems: "center", width: "100%"}}
               renderItem={({ item }) => (
                 <View style={styles.streakChecksContainer}>
-                  <View style={styles.streakChecks}></View>
+                  <View style={styles.streakChecks}>{item.value === today && <Feather name="check" size={24} color={"white"}/>}</View>
                   <Text style={styles.streakDaysText}>{item.day[0]}</Text>
                 </View>
               )}
@@ -66,6 +69,9 @@ export default function HomeTab() {
           </View>
         </View>
       </View>
+
+      {/* //Lessons */}
+      
     </SafeAreaView>
   );
 }
@@ -163,6 +169,7 @@ const styles = StyleSheet.create({
   },
   streakDaysContainer: {
     flexDirection: "row",
+    marginHorizontal: 8,
   },
   streakDaysText: {
     fontSize: 12,
@@ -170,8 +177,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   streakChecksContainer: {
-    flexDirection: "row",
-    gap: 16,
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -180,7 +186,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: "100%",
     borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
     borderColor: "#382324",
-    backgroundColor: "transparent",
+     backgroundColor: 'rgba(255, 255, 255, 0.15)'
   },
 });

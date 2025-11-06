@@ -1,24 +1,32 @@
 const StreakDays = [
     {
-        day: "Monday"
+        day: "Monday",
+        value: 1
     },
     {
-        day: "Tuesday"
+        day: "Tuesday",
+        value: 2
+    
     },
     {
-        day: "Wednesday"
+        day: "Wednesday",
+        value: 3
     },
     {
-        day: "Thursday"
+        day: "Thursday",
+        value: 4
     },
     {
-        day: "Friday"
+        day: "Friday",
+        value: 5
     },
     {
-        day: "Saturday"
+        day: "Saturday",
+        value: 6
     },
     {
-        day: "Sunday"
+        day: "Sunday",
+        value: 0
     }
     
 ]
