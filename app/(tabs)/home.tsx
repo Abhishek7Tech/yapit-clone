@@ -3,9 +3,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 import { Image } from "expo-image";
 import StreakDays from "../utils/streak";
+import Lessons from "../utils/lessons";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
+import { Link } from "expo-router";
 export default function HomeTab() {
   const today = new Date().getDay();
   return (
@@ -57,10 +59,18 @@ export default function HomeTab() {
             <FlatList
               data={StreakDays}
               horizontal={true}
-              contentContainerStyle={{justifyContent: "space-between", alignItems: "center", width: "100%"}}
+              contentContainerStyle={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
               renderItem={({ item }) => (
                 <View style={styles.streakChecksContainer}>
-                  <View style={styles.streakChecks}>{item.value === today && <Feather name="check" size={24} color={"white"}/>}</View>
+                  <View style={styles.streakChecks}>
+                    {item.value === today && (
+                      <Feather name="check" size={24} color={"white"} />
+                    )}
+                  </View>
                   <Text style={styles.streakDaysText}>{item.day[0]}</Text>
                 </View>
               )}
@@ -71,7 +81,58 @@ export default function HomeTab() {
       </View>
 
       {/* //Lessons */}
-      
+      <View>
+        <View style={styles.lessonsHeadingContainer}>
+          <Text style={styles.lessonsHeading}>Lessons</Text>
+          <Link style={styles.allLessons} href={"/home"}>
+            See all
+          </Link>
+        </View>
+
+        <View style={styles.lessonsListContainer}>
+          <FlatList
+            data={Lessons}
+            horizontal={true}
+            contentContainerStyle={{
+              overflowX: "auto",
+              paddingHorizontal: 16,
+              gap: 16,
+              marginInline: -16,
+            }}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.lessonsContainer,
+                  {
+                    backgroundColor: item.disabled ? "#e5e7eb" : "white",
+                    borderColor: item.disabled ? "#e2ddd3" : "#d1d5db",
+                  },
+                ]}
+              >
+                <View style={{ paddingBottom: 12 }}>
+                  <Text
+                    style={[
+                      styles.lessonText,
+                      { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                    ]}
+                  >
+                    Lesson {item.lesson}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.groupText,
+                      { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                    ]}
+                  >
+                    Group {item.group}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -189,6 +250,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderColor: "#382324",
-     backgroundColor: 'rgba(255, 255, 255, 0.15)'
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+  },
+  lessonsHeadingContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  lessonsHeading: {
+    color: Styles.textSecondary,
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  allLessons: {
+    color: Styles.textSecondary,
+    fontSize: 14,
+    fontWeight: "200",
+  },
+  lessonsListContainer: {
+    paddingVertical: 8,
+  },
+  lessonsContainer: {
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    width: 160,
+    height: 128,
+    borderBottomWidth: 3,
+    borderColor: "#d1d5db",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    paddingTop: 16,
+  },
+  lessonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 16,
+    // color: "#2d1c1c"
+  },
+  groupText: {
+    fontSize: 14,
+    flexWrap: "wrap",
+    // color: ""
   },
 });
