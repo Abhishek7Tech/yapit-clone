@@ -98,6 +98,7 @@ export default function HomeTab() {
               paddingHorizontal: 16,
               gap: 16,
               marginInline: -16,
+              paddingBottom: 12
             }}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
@@ -106,7 +107,7 @@ export default function HomeTab() {
                   styles.lessonsContainer,
                   {
                     backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                    borderColor: item.disabled ? "#e2ddd3" : "#d1d5db",
+                    boxShadow: `0 3px ${item.disabled ? "#e2ddd3" : "#d1d5db" }`,
                   },
                 ]}
               >
@@ -273,12 +274,12 @@ const styles = StyleSheet.create({
   },
   lessonsContainer: {
     borderRadius: 16,
+    position: "relative",
+    overflow: "hidden",
     paddingHorizontal: 16,
     paddingVertical: 24,
     width: 160,
     height: 128,
-    borderBottomWidth: 3,
-    borderColor: "#d1d5db",
     alignItems: "flex-start",
     justifyContent: "flex-start",
     paddingTop: 16,
@@ -287,11 +288,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 16,
-    // color: "#2d1c1c"
   },
   groupText: {
     fontSize: 14,
     flexWrap: "wrap",
-    // color: ""
   },
 });
