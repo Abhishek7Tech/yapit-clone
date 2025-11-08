@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Platform, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 import { Image } from "expo-image";
@@ -8,6 +15,7 @@ const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
+import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 export default function HomeTab() {
   const today = new Date().getDay();
   return (
@@ -84,7 +92,7 @@ export default function HomeTab() {
       <View>
         <View style={styles.lessonsHeadingContainer}>
           <Text style={styles.lessonsHeading}>Lessons</Text>
-          <Link style={styles.allLessons} href={"/home"}>
+          <Link style={styles.allLessons} href={"/lessons/lessons"}>
             See all
           </Link>
         </View>
@@ -98,7 +106,7 @@ export default function HomeTab() {
               paddingHorizontal: 16,
               gap: 16,
               marginInline: -16,
-              paddingBottom: 12
+              paddingBottom: 10,
             }}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
@@ -107,7 +115,7 @@ export default function HomeTab() {
                   styles.lessonsContainer,
                   {
                     backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                    boxShadow: `0 3px ${item.disabled ? "#e2ddd3" : "#d1d5db" }`,
+                    boxShadow: `0 3px ${item.disabled ? "#e2ddd3" : "#d1d5db"}`,
                   },
                 ]}
               >
@@ -132,6 +140,25 @@ export default function HomeTab() {
               </View>
             )}
           />
+        </View>
+      </View>
+
+      {/* // Talk to Teacher  */}
+      <View style={styles.talkToTeacherContainer}>
+        <Pressable style={styles.talkToTeacherButton}>
+          <Text style={styles.talkToTeacherButtonText}>
+            Talk to Spanish Teacher
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Quiz */}
+      <View>
+        <Text style={styles.quizHeading}>Quiz</Text>
+        <View style={styles.quizContainer}>
+          <View style={styles.quizIcon}>
+            <FontAwesome5 name="lock" size={28} color={"#6b7280"} />
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -292,5 +319,44 @@ const styles = StyleSheet.create({
   groupText: {
     fontSize: 14,
     flexWrap: "wrap",
+  },
+  talkToTeacherContainer: {
+    marginTop: 4,
+  },
+  talkToTeacherButton: {
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
+    borderColor: "black",
+    backgroundColor: Styles.backgroundSecondary,
+    paddingVertical: 12,
+    borderRadius: 16,
+    boxShadow:
+      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+  },
+  talkToTeacherButtonText: {
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+  },
+  quizHeading: {
+    color: Styles.textSecondary,
+    fontSize: 20,
+    fontWeight: "600",
+    marginVertical: 8,
+  },
+  quizContainer: {
+    borderRadius: 12,
+    paddingVertical: 32,
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
+    borderColor: "#d1d5db",
+    backgroundColor: "#e5e7eb",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  quizIcon: {
+    paddingVertical: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
