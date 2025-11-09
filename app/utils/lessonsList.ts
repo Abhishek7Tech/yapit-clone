@@ -1,4 +1,4 @@
-const Lessons = [
+const LessonsList = [
   {
     group: 1,
     lesson: 1,
@@ -26,4 +26,4 @@ const Lessons = [
   },
 ];
 
-export default Lessons;
+export default LessonsList;

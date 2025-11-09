@@ -1,21 +1,21 @@
+import { FontAwesome5 } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
   FlatList,
+  Platform,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Styles from "../utils/styles";
-import { Image } from "expo-image";
+import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
-import Lessons from "../utils/lessons";
+import Styles from "../utils/styles";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
-import Feather from "@expo/vector-icons/Feather";
-import { Link } from "expo-router";
-import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 export default function HomeTab() {
   const today = new Date().getDay();
   return (
@@ -92,14 +92,14 @@ export default function HomeTab() {
       <View>
         <View style={styles.lessonsHeadingContainer}>
           <Text style={styles.lessonsHeading}>Lessons</Text>
-          <Link style={styles.allLessons} href={"/lessons/lessons"}>
+          <Link style={styles.allLessons} href={"/lessons/lesson"}>
             See all
           </Link>
         </View>
 
         <View style={styles.lessonsListContainer}>
           <FlatList
-            data={Lessons}
+            data={LessonsList}
             horizontal={true}
             contentContainerStyle={{
               overflowX: "auto",
