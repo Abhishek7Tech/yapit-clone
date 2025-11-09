@@ -14,12 +14,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
+import { Notifications } from "../components/notification";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
 export default function HomeTab() {
   const today = new Date().getDay();
   return (
     <SafeAreaView style={styles.container}>
+      <Notifications />
       <View style={styles.headingView}>
         <Text style={styles.headingText}>Welcome John Doe</Text>
         <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>

@@ -4,12 +4,14 @@ import Styles from "../utils/styles";
 import { Groups } from "../components/groups";
 import AllLessons from "../utils/AllLessons";
 import useLessonsStore from "../store/allLessonsStore";
+import { Notifications } from "../components/notification";
 
 
 export default function Lesson() {
   const allLessons = useLessonsStore((state) => state.allLessons);
   return (
     <SafeAreaView style={styles.container}>
+      <Notifications/>
       <FlatList
         data={allLessons}
         keyExtractor={(item, index) => index.toString()}
