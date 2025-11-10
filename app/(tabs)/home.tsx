@@ -1,7 +1,7 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import {
   FlatList,
   Platform,
@@ -23,11 +23,17 @@ export default function HomeTab() {
   const [notifications, setNotifications] = useState(false);
   const quizHandler = () => {
     setNotifications(true);
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        {notifications && <Notifications notification={notifications} handleNotifications={setNotifications} message={"Finish 5 more lessons to unlock the quiz."} /> }
+        {notifications && (
+          <Notifications
+            notification={notifications}
+            handleNotifications={setNotifications}
+            message={"Finish 5 more lessons to unlock the quiz."}
+          />
+        )}
         <View style={styles.headingView}>
           <Text style={styles.headingText}>Welcome John Doe</Text>
           <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>
@@ -100,7 +106,7 @@ export default function HomeTab() {
         <View>
           <View style={styles.lessonsHeadingContainer}>
             <Text style={styles.lessonsHeading}>Lessons</Text>
-            <Link style={styles.allLessons} href={"/lessons/lesson"}>
+            <Link style={styles.allLessons} href={"/lessons/allLessons"}>
               See all
             </Link>
           </View>
@@ -129,24 +135,29 @@ export default function HomeTab() {
                     },
                   ]}
                 >
-                  <View style={{ paddingBottom: 12 }}>
-                    <Text
-                      style={[
-                        styles.lessonText,
-                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                      ]}
-                    >
-                      Lesson {item.lesson}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.groupText,
-                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                      ]}
-                    >
-                      Group {item.group}
-                    </Text>
-                  </View>
+                  <Pressable
+                    onPress={() => router.navigate("/lesson")}
+                    disabled={item.disabled}
+                  >
+                    <View style={{ paddingBottom: 12 }}>
+                      <Text
+                        style={[
+                          styles.lessonText,
+                          { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                        ]}
+                      >
+                        Lesson {item.lesson}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.groupText,
+                          { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                        ]}
+                      >
+                        Group {item.group}
+                      </Text>
+                    </View>
+                  </Pressable>
                 </View>
               )}
             />

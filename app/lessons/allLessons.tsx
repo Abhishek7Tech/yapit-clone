@@ -7,7 +7,7 @@ import useLessonsStore from "../store/allLessonsStore";
 import { Notifications } from "../components/notification";
 import { useState } from "react";
 
-export default function Lesson() {
+export default function AllLesson() {
   const allLessons = useLessonsStore((state) => state.allLessons);
   const [notifications, setNotifications] = useState(false);
 

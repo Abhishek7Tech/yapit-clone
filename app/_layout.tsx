@@ -30,6 +30,27 @@ export default function RootLayout() {
           ),
         }}
       ></Stack.Screen>
+
+      <Stack.Screen
+        name="lesson"
+        options={{
+          headerTitle: " ",
+          headerStyle: { backgroundColor: Styles.backgroundColor },
+          headerTitleStyle: {
+            fontSize: 20,
+            fontWeight: "600",
+            color: Styles.textSecondary,
+          },
+          headerLeft: () => (
+            <Pressable
+              style={{ paddingRight: 12 }}
+              onPress={() => router.back()}
+            >
+              <AntDesign name="left" size={20} color={Styles.textSecondary} />
+            </Pressable>
+          ),
+        }}
+      ></Stack.Screen>
     </Stack>
   );
 }
