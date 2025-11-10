@@ -1,30 +1,97 @@
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, Pressable, StatusBar } from "react-native";
-import Styles from "../utils/styles";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Animated,
+} from "react-native";
 
-export function Notifications() {
+import Styles from "../utils/styles";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+
+export function Notifications({
+  handleNotifications,
+  notification,
+  message,
+}: {
+  message: String;
+  notification: Boolean;
+  handleNotifications: Dispatch<SetStateAction<boolean>>;
+}) {
+  const zIndexValue = useRef(new Animated.Value(-1)).current;
+  const distanceFromTop = useRef(new Animated.Value(0)).current;
+const handleNotification = () => {
+  Animated.timing(distanceFromTop, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+
+      Animated.timing(zIndexValue, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+      handleNotifications(!notification);
+}
+  useEffect(() => {
+    Animated.timing(distanceFromTop, {
+      toValue: 20,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(zIndexValue, {
+      toValue: 100,
+      duration: 1,
+      useNativeDriver: true,
+    }).start();
+
+    setTimeout(() => {
+      Animated.timing(distanceFromTop, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+
+      Animated.timing(zIndexValue, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+      handleNotifications(!notification);
+    }, 5000);
+    console.log("Notification", notification);
+  }, [notification]);
+
+
   return (
-    <View style={styles.notificationsComponent}>
-        <Ionicons
-          name="notifications-circle-outline"
-          size={24}
-          color={"#3B82F6"}
-        />
-        <Text style={styles.notificationsText}>
-          Finish 5 more lessons to unlock the quiz.
-        </Text>
-        <Pressable>
-          <Text style={styles.buttonText}>x</Text>
-        </Pressable>
-      </View>
+    <Animated.View
+      style={[
+        styles.notificationsComponent,
+        { zIndex: zIndexValue, transform: [{translateY: distanceFromTop}] },
+      ]}
+    >
+      <Ionicons
+        name="notifications-circle-outline"
+        size={24}
+        color={"#3B82F6"}
+      />
+      <Text style={styles.notificationsText}>
+        {message}
+      </Text>
+      <Pressable onPress={() => handleNotification()}>
+        <Text style={styles.buttonText}>x</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   notificationsComponent: {
     position: "absolute",
-    top: 26,
-    zIndex: 1000,
     insetInline: 0,
     flexDirection: "row",
     justifyContent: "space-between",

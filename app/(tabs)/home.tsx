@@ -15,152 +15,163 @@ import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
 import { Notifications } from "../components/notification";
+import { useState } from "react";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
 export default function HomeTab() {
   const today = new Date().getDay();
+  const [notifications, setNotifications] = useState(false);
+  const quizHandler = () => {
+    setNotifications(true);
+  }
   return (
     <SafeAreaView style={styles.container}>
-      <Notifications />
-      <View style={styles.headingView}>
-        <Text style={styles.headingText}>Welcome John Doe</Text>
-        <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>
-      </View>
-      {/* // AccountsView */}
-      <View style={styles.accountsView}>
-        <View style={styles.accountsContainer}>
-          <View style={styles.accountsHeadingView}>
-            <Text style={styles.accountsHeadingText}> Available Balance</Text>
-            <Text style={styles.accountsBalanceText}>
-              0
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "400",
-                  textTransform: "capitalize",
-                }}
-              >
-                {" "}
-                yap
-              </Text>
-            </Text>
-          </View>
-          <Image
-            source={coinUrl}
-            accessibilityLabel="Yap Coin"
-            contentFit="contain"
-            style={styles.currencyImg}
-          />
+      <View>
+        {notifications && <Notifications notification={notifications} handleNotifications={setNotifications} message={"Finish 5 more lessons to unlock the quiz."} /> }
+        <View style={styles.headingView}>
+          <Text style={styles.headingText}>Welcome John Doe</Text>
+          <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>
         </View>
-      </View>
-
-      {/* StreakView */}
-      <View style={styles.streakView}>
-        <View style={styles.streakContainer}>
-          <View style={styles.streakHeading}>
+        {/* // AccountsView */}
+        <View style={styles.accountsView}>
+          <View style={styles.accountsContainer}>
+            <View style={styles.accountsHeadingView}>
+              <Text style={styles.accountsHeadingText}> Available Balance</Text>
+              <Text style={styles.accountsBalanceText}>
+                0
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "400",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {" "}
+                  yap
+                </Text>
+              </Text>
+            </View>
             <Image
-              style={styles.flamesImg}
-              source={flamesUrl}
-              accessibilityLabel="Flame icon"
+              source={coinUrl}
+              accessibilityLabel="Yap Coin"
+              contentFit="contain"
+              style={styles.currencyImg}
             />
-            <Text style={styles.streakHeadingText}>Daily Streak</Text>
           </View>
-          <View style={styles.streakDaysContainer}>
+        </View>
+
+        {/* StreakView */}
+        <View style={styles.streakView}>
+          <View style={styles.streakContainer}>
+            <View style={styles.streakHeading}>
+              <Image
+                style={styles.flamesImg}
+                source={flamesUrl}
+                accessibilityLabel="Flame icon"
+              />
+              <Text style={styles.streakHeadingText}>Daily Streak</Text>
+            </View>
+            <View style={styles.streakDaysContainer}>
+              <FlatList
+                data={StreakDays}
+                horizontal={true}
+                contentContainerStyle={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+                renderItem={({ item }) => (
+                  <View style={styles.streakChecksContainer}>
+                    <View style={styles.streakChecks}>
+                      {item.value === today && (
+                        <Feather name="check" size={24} color={"white"} />
+                      )}
+                    </View>
+                    <Text style={styles.streakDaysText}>{item.day[0]}</Text>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          </View>
+        </View>
+
+        {/* //Lessons */}
+        <View>
+          <View style={styles.lessonsHeadingContainer}>
+            <Text style={styles.lessonsHeading}>Lessons</Text>
+            <Link style={styles.allLessons} href={"/lessons/lesson"}>
+              See all
+            </Link>
+          </View>
+
+          <View style={styles.lessonsListContainer}>
             <FlatList
-              data={StreakDays}
+              data={LessonsList}
               horizontal={true}
               contentContainerStyle={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "100%",
+                overflowX: "auto",
+                paddingHorizontal: 16,
+                gap: 16,
+                marginInline: -16,
+                paddingBottom: 10,
               }}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <View style={styles.streakChecksContainer}>
-                  <View style={styles.streakChecks}>
-                    {item.value === today && (
-                      <Feather name="check" size={24} color={"white"} />
-                    )}
+                <View
+                  style={[
+                    styles.lessonsContainer,
+                    {
+                      backgroundColor: item.disabled ? "#e5e7eb" : "white",
+                      boxShadow: `0 3px ${
+                        item.disabled ? "#e2ddd3" : "#d1d5db"
+                      }`,
+                    },
+                  ]}
+                >
+                  <View style={{ paddingBottom: 12 }}>
+                    <Text
+                      style={[
+                        styles.lessonText,
+                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                      ]}
+                    >
+                      Lesson {item.lesson}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.groupText,
+                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                      ]}
+                    >
+                      Group {item.group}
+                    </Text>
                   </View>
-                  <Text style={styles.streakDaysText}>{item.day[0]}</Text>
                 </View>
               )}
-              keyExtractor={(item, index) => index.toString()}
             />
           </View>
         </View>
-      </View>
 
-      {/* //Lessons */}
-      <View>
-        <View style={styles.lessonsHeadingContainer}>
-          <Text style={styles.lessonsHeading}>Lessons</Text>
-          <Link style={styles.allLessons} href={"/lessons/lesson"}>
-            See all
-          </Link>
+        {/* // Talk to Teacher  */}
+        <View style={styles.talkToTeacherContainer}>
+          <Pressable style={styles.talkToTeacherButton}>
+            <Text style={styles.talkToTeacherButtonText}>
+              Talk to Spanish Teacher
+            </Text>
+          </Pressable>
         </View>
 
-        <View style={styles.lessonsListContainer}>
-          <FlatList
-            data={LessonsList}
-            horizontal={true}
-            contentContainerStyle={{
-              overflowX: "auto",
-              paddingHorizontal: 16,
-              gap: 16,
-              marginInline: -16,
-              paddingBottom: 10,
-            }}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View
-                style={[
-                  styles.lessonsContainer,
-                  {
-                    backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                    boxShadow: `0 3px ${item.disabled ? "#e2ddd3" : "#d1d5db"}`,
-                  },
-                ]}
-              >
-                <View style={{ paddingBottom: 12 }}>
-                  <Text
-                    style={[
-                      styles.lessonText,
-                      { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                    ]}
-                  >
-                    Lesson {item.lesson}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.groupText,
-                      { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                    ]}
-                  >
-                    Group {item.group}
-                  </Text>
-                </View>
+        {/* Quiz */}
+        <View>
+          <Text style={styles.quizHeading}>Quiz</Text>
+          <Pressable onPress={() => quizHandler()}>
+            <View style={styles.quizContainer}>
+              <View style={styles.quizIcon}>
+                <FontAwesome5 name="lock" size={28} color={"#6b7280"} />
               </View>
-            )}
-          />
-        </View>
-      </View>
-
-      {/* // Talk to Teacher  */}
-      <View style={styles.talkToTeacherContainer}>
-        <Pressable style={styles.talkToTeacherButton}>
-          <Text style={styles.talkToTeacherButtonText}>
-            Talk to Spanish Teacher
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* Quiz */}
-      <View>
-        <Text style={styles.quizHeading}>Quiz</Text>
-        <View style={styles.quizContainer}>
-          <View style={styles.quizIcon}>
-            <FontAwesome5 name="lock" size={28} color={"#6b7280"} />
-          </View>
+            </View>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
