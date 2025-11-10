@@ -10,7 +10,7 @@ import { Dispatch, SetStateAction } from "react";
 
 const Dappy = require("@/assets/images/dappy.svg");
 
-export function Groups({
+export default function Groups({
   item,
   notification,
   handleNotifications,

@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import Styles from "../utils/styles";
 import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
 const YappyImg = require("@/assets/images/yappy.webp");
 export default function Lesson() {
   return (
@@ -16,7 +17,7 @@ export default function Lesson() {
         <Text style={styles.lessonText}>Lesson 1</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={() => router.navigate("/lesson/3?seq=1")}>
           <Text style={styles.buttonText}>Continue</Text>
         </Pressable>
       </View>
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "absolute",
     bottom: 75,
+
   },
   button: {
     width: "100%",

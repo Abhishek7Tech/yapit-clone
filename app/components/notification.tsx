@@ -11,7 +11,7 @@ import {
 import Styles from "../utils/styles";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
-export function Notifications({
+export default function Notifications({
   handleNotifications,
   notification,
   message,
