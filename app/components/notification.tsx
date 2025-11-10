@@ -22,23 +22,24 @@ export function Notifications({
 }) {
   const zIndexValue = useRef(new Animated.Value(-1)).current;
   const distanceFromTop = useRef(new Animated.Value(0)).current;
-const handleNotification = () => {
-  Animated.timing(distanceFromTop, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
+  const handleNotification = () => {
+    Animated.timing(distanceFromTop, {
+      toValue: 0,
+      duration: 10,
+      useNativeDriver: true,
+    }).start();
 
-      Animated.timing(zIndexValue, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-      handleNotifications(!notification);
-}
+    Animated.timing(zIndexValue, {
+      toValue: 0,
+      duration: 10,
+      useNativeDriver: true,
+    }).start();
+    handleNotifications(!notification);
+  };
+  
   useEffect(() => {
     Animated.timing(distanceFromTop, {
-      toValue: 20,
+      toValue: 2,
       duration: 500,
       useNativeDriver: true,
     }).start();
@@ -66,12 +67,11 @@ const handleNotification = () => {
     console.log("Notification", notification);
   }, [notification]);
 
-
   return (
     <Animated.View
       style={[
         styles.notificationsComponent,
-        { zIndex: zIndexValue, transform: [{translateY: distanceFromTop}] },
+        { zIndex: zIndexValue, transform: [{ translateY: distanceFromTop }] },
       ]}
     >
       <Ionicons
@@ -79,9 +79,7 @@ const handleNotification = () => {
         size={24}
         color={"#3B82F6"}
       />
-      <Text style={styles.notificationsText}>
-        {message}
-      </Text>
+      <Text style={styles.notificationsText}>{message}</Text>
       <Pressable onPress={() => handleNotification()}>
         <Text style={styles.buttonText}>x</Text>
       </Pressable>

@@ -6,19 +6,27 @@ import Lessons from "../utils/lessonsList";
 import Styles from "../utils/styles";
 import AllLessons from "../utils/AllLessons";
 import useLessonsStore from "../store/allLessonsStore";
+import { Dispatch, SetStateAction } from "react";
 
 const Dappy = require("@/assets/images/dappy.svg");
 
 export function Groups({
   item,
+  notification,
+  handleNotifications,
 }: {
+  handleNotifications: Dispatch<SetStateAction<boolean>>;
+  notification: Boolean;
   item: { group: number; showLessons: boolean };
 }) {
-    const toggleLessons = useLessonsStore((state) => state.toggleLessons);
-    const showGroup = (groupNo: number) => {
-        console.log("Group number", groupNo);
-        toggleLessons(groupNo);
-    }
+  const toggleLessons = useLessonsStore((state) => state.toggleLessons);
+  const showGroup = (groupNo: number) => {
+    console.log("Group number", groupNo);
+    toggleLessons(groupNo);
+  };
+  const lessonHandler = () => {
+    handleNotifications(!notification);
+  };
   return (
     <View
       style={[
@@ -55,55 +63,66 @@ export function Groups({
         </View>
       </Pressable>
 
-     { item.showLessons && <FlatList
-        contentContainerStyle={{
-          paddingVertical: 8,
-        }}
-        data={Lessons}
-        ItemSeparatorComponent={() => (
-          <View
-            style={{ height: 1, paddingTop: 1, backgroundColor: "white" }}
-          ></View>
-        )}
-        ListFooterComponent={() => (
-          <>
+      {item.showLessons && (
+        <FlatList
+          contentContainerStyle={{
+            paddingVertical: 8,
+          }}
+          data={Lessons}
+          ItemSeparatorComponent={() => (
             <View
-              style={{
-                height: 1,
-                paddingTop: 1,
-                backgroundColor: "white",
-              }}
+              style={{ height: 1, paddingTop: 1, backgroundColor: "white" }}
             ></View>
-            <View
-              style={[
-                styles.lessonContainer,
-                {
-                  backgroundColor: GroupBg[item.group % GroupBg.length].background,
-                  borderColor: GroupBg[item.group % GroupBg.length].border,
-                },
-              ]}
-            >
-              <Text style={styles.lessonHeading}>Final Quiz</Text>
-              <View>
-                <AntDesign
-                  name="right"
-                  size={14}
-                  color={Styles.textSecondary}
-                />
+          )}
+          ListFooterComponent={() => (
+            <>
+              <Pressable onPress={() => lessonHandler()}>
+                <View
+                  style={{
+                    height: 1,
+                    paddingTop: 1,
+                    backgroundColor: "white",
+                  }}
+                ></View>
+                <View
+                  style={[
+                    styles.lessonContainer,
+                    {
+                      backgroundColor:
+                        GroupBg[item.group % GroupBg.length].background,
+                      borderColor: GroupBg[item.group % GroupBg.length].border,
+                    },
+                  ]}
+                >
+                  <Text style={styles.lessonHeading}>Final Quiz</Text>
+                  <View>
+                    <AntDesign
+                      name="right"
+                      size={14}
+                      color={Styles.textSecondary}
+                    />
+                  </View>
+                </View>
+              </Pressable>
+            </>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Pressable onPress={() => lessonHandler()}>
+              <View style={styles.lessonContainer}>
+                <Text style={styles.lessonHeading}>Lesson {item.lesson}</Text>
+                <View>
+                  <AntDesign
+                    name="right"
+                    size={14}
+                    color={Styles.textSecondary}
+                  />
+                </View>
               </View>
-            </View>
-          </>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.lessonContainer}>
-            <Text style={styles.lessonHeading}>Lesson {item.lesson}</Text>
-            <View>
-              <AntDesign name="right" size={14} color={Styles.textSecondary} />
-            </View>
-          </View>
-        )}
-      /> }
+            </Pressable>
+          )}
+        />
+      )}
     </View>
   );
 }
