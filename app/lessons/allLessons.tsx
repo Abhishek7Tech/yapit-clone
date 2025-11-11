@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Pressable, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
-import { Groups } from "../components/groups";
+import  Groups from "../components/groups";
 import AllLessons from "../utils/AllLessons";
 import useLessonsStore from "../store/allLessonsStore";
-import { Notifications } from "../components/notification";
+import  Notifications  from "../components/notification";
 import { useState } from "react";
 
 export default function AllLesson() {
