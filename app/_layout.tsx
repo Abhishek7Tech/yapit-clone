@@ -1,7 +1,7 @@
 import { router, Stack } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 import Styles from "./utils/styles";
-import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function RootLayout() {
   return (

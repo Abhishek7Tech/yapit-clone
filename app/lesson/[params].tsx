@@ -1,47 +1,55 @@
 import { useLocalSearchParams } from "expo-router";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Animated,
+  Easing,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Styles from "../utils/styles";
-
-import Animated from "react-native-reanimated";
-import {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { speak } from "expo-speech";
+// import Animated from "react-native-reanimated";
+// import {
+//   interpolate,
+//   useAnimatedStyle,
+//   useSharedValue,
+//   withTiming,
+// } from "react-native-reanimated";
+import { useEffect, useRef, useState } from "react";
 function VocabularyLessons() {
-  const flip = useSharedValue(0);
+  // const flip = useSharedValue(0);
+  const flip = useRef(new Animated.Value(0)).current;
+  const [flipped, setFlipped] = useState(true);
   const params = useLocalSearchParams();
+  const speechHandler = () => {
+    speak("Kan cha");
+  };
 
-  const flipBackHandler = useAnimatedStyle(() => {
-    const flipBack = interpolate(flip.value, [0, 1], [360, 180]);
-    return {
-      transform: [
-        {
-          rotateY: withTiming(`${flipBack}deg`, { duration: 500 }),
-        },
-      ],
-      position: "absolute",
-      width: "100%"
-    };
+  const flipBack = flip.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["360deg", "180deg"],
   });
 
-  const flipFrontHandler = useAnimatedStyle(() => {
-    const flipFront = interpolate(flip.value, [0, 1], [180, 0]);
-    return {
-      transform: [
-        {
-          rotateY: withTiming(`${flipFront}deg`, { duration: 500 }),
-        },
-      ],
-      backfaceVisibility: "hidden",
-    };
+  const flipFront = flip.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["180deg", "0deg"],
   });
+
+  const flipCard = () => {
+    Animated.timing(flip, {
+      toValue: flipped ? 0 : 180,
+      duration: 400,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => setFlipped(!flipped));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -60,8 +68,20 @@ function VocabularyLessons() {
       </View>
       {/* LESSON CARD FRONT SIDE */}
       {/* <View style={{paddingHorizontal: 16}}> */}
-        <Pressable onPress={() => (flip.value = flip.value ? 1 : 0)}>
-          <Animated.View style={[styles.viewContainer, flipBackHandler]}>
+      <View>
+        <Animated.View
+          style={[
+            styles.viewContainer,
+            {
+              transform: [{ rotateY: flipBack }],
+            },
+          ]}
+          pointerEvents={"box-none"}
+        >
+          <Pressable
+            style={{ paddingHorizontal: 32, paddingTop: 32 }}
+            onPress={() => flipCard()}
+          >
             <View style={styles.instructionContainer}>
               <Text style={styles.instructionsText}>Repeat what you hear.</Text>
               <Text style={styles.lessonText}>
@@ -72,14 +92,30 @@ function VocabularyLessons() {
             <Text style={styles.instructionText}>
               Tab card to see defination.
             </Text>
-            <Pressable style={styles.speakButton}>
+            <Pressable
+              style={styles.speakButton}
+              onPress={() => {
+                speechHandler();
+              }}
+            >
               <Foundation name="sound" size={24} color="white" />
             </Pressable>
-          </Animated.View>
-        </Pressable>
-        {/* LESSON CARD BACK SIDE */}
-        <Pressable onPress={() => (flip.value = flip.value ? 0 : 1)}>
-          <Animated.View style={[styles.viewContainer, flipFrontHandler]}>
+          </Pressable>
+        </Animated.View>
+      </View>
+      {/* LESSON CARD BACK SIDE */}
+      <View>
+        <Pressable onPress={() => flipCard()}>
+          <Animated.View
+            style={[
+              styles.viewContainer,
+              {
+                transform: [{ rotateY: flipFront }],
+                paddingHorizontal: 32,
+                paddingTop: 32,
+              },
+            ]}
+          >
             <View style={styles.instructionContainer}>
               <Text style={styles.instructionsText}>Defination</Text>
               <Text style={styles.lessonText}>
@@ -107,6 +143,7 @@ function VocabularyLessons() {
             </Text>
           </Animated.View>
         </Pressable>
+      </View>
       {/* </View> */}
       <View style={styles.recordButtonContainer}>
         <Pressable style={styles.recordButton}>
@@ -150,14 +187,17 @@ const styles = StyleSheet.create({
   },
   viewContainer: {
     marginTop: 24,
+    zIndex: 1,
+    backfaceVisibility: "hidden",
+    position: "absolute",
+    width: "100%",
     // marginInline: 12,
     // alignItems: "center",
     backgroundColor: "white",
     borderRadius: 28,
-    paddingHorizontal: 32,
-    paddingTop: 32,
+    // paddingHorizontal: 32,
+    // paddingTop: 32,
     boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
-
   },
   instructionContainer: {
     flexDirection: "row",
@@ -189,7 +229,7 @@ const styles = StyleSheet.create({
     width: 48,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: "100%",
+    borderRadius: 9999,
     backgroundColor: "#FFC12E",
     boxShadow: "0 2px 2px 1px #E0A924",
     shadowColor: "#E0A924",
@@ -197,6 +237,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 4,
     alignSelf: "flex-end",
+    elevation: 5,
+    zIndex: 999,
+
     // boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
   },
   recordButtonContainer: {
