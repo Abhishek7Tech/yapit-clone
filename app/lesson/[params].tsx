@@ -25,7 +25,7 @@ import { useEffect, useRef, useState } from "react";
 function VocabularyLessons() {
   // const flip = useSharedValue(0);
   const flip = useRef(new Animated.Value(0)).current;
-  const [flipped, setFlipped] = useState(true);
+  const [flipped, setFlipped] = useState(false);
   const params = useLocalSearchParams();
   const speechHandler = () => {
     speak("Kan cha");
@@ -78,21 +78,23 @@ function VocabularyLessons() {
           ]}
           pointerEvents={"box-none"}
         >
-          <Pressable
-            style={{ paddingHorizontal: 32, paddingTop: 32 }}
-            onPress={() => flipCard()}
-          >
-            <View style={styles.instructionContainer}>
-              <Text style={styles.instructionsText}>Repeat what you hear.</Text>
-              <Text style={styles.lessonText}>
-                <Text style={{ fontWeight: "bold" }}>3</Text>/08
+          <Pressable onPress={() => flipCard()}>
+            <View style={{ paddingHorizontal: 32, paddingTop: 32 }}>
+              <View style={styles.instructionContainer}>
+                <Text style={styles.instructionsText}>
+                  Repeat what you hear.
+                </Text>
+                <Text style={styles.lessonText}>
+                  <Text style={{ fontWeight: "bold" }}>3</Text>/08
+                </Text>
+              </View>
+              <Text style={styles.vocalbularyText}>buenaus tardes</Text>
+              <Text style={styles.instructionText}>
+                Tab card to see defination.
               </Text>
             </View>
-            <Text style={styles.vocalbularyText}>buenaus tardes</Text>
-            <Text style={styles.instructionText}>
-              Tab card to see defination.
-            </Text>
             <Pressable
+            disabled={flipped}
               style={styles.speakButton}
               onPress={() => {
                 speechHandler();
@@ -113,6 +115,7 @@ function VocabularyLessons() {
                 transform: [{ rotateY: flipFront }],
                 paddingHorizontal: 32,
                 paddingTop: 32,
+                paddingBottom: 24
               },
             ]}
           >
@@ -136,7 +139,7 @@ function VocabularyLessons() {
             <Text
               style={[
                 styles.instructionText,
-                { marginTop: 12, marginBottom: 20 },
+                { marginTop: 12 },
               ]}
             >
               Tap to go back
@@ -236,6 +239,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 4, height: 4 },
     marginBottom: 20,
     marginTop: 4,
+    marginRight: 20,
     alignSelf: "flex-end",
     elevation: 5,
     zIndex: 999,
