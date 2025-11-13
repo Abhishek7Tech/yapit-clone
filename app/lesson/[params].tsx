@@ -6,17 +6,30 @@ import {
   Pressable,
   Animated,
   Easing,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Feather from "@expo/vector-icons/Feather";
 import Styles from "../utils/styles";
 import { speak } from "expo-speech";
+import {
+  AudioModule,
+  createAudioPlayer,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioPlayer,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from "expo-audio";
 
 import { useEffect, useRef, useState } from "react";
 import { opacity } from "react-native-reanimated/lib/typescript/Colors";
+import Notifications from "../components/notification";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
   const recordAnim = useRef(new Animated.Value(1)).current;
@@ -24,6 +37,13 @@ function VocabularyLessons() {
   const [flipped, setFlipped] = useState(false);
   const [startRecording, setStartRecording] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [playButton, setPlayButton] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const player = useAudioPlayer(audioRecorder.uri);
+  const recorderState = useAudioRecorderState(audioRecorder);
+
   const params = useLocalSearchParams();
   const speechHandler = () => {
     speak("Kan cha");
@@ -49,35 +69,86 @@ function VocabularyLessons() {
   };
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(recordAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(recordAnim, {
-          toValue: 0,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [recordAnim]);
+    if (recorderState.isRecording) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(recordAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(recordAnim, {
+            toValue: 0,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [recorderState.isRecording]);
 
   const opacity = recordAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0.9, 0.4],
   });
 
-  const recordButtonHandler = () => {
+  const askForMicroPhonePermission = async () => {
+    const status = await AudioModule.requestRecordingPermissionsAsync();
+    console.log("Permission", status)
+    if (!status.granted) {
+      setNotifications(true);
+      return;
+    }
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      allowsRecording: true,
+    });
+  };
+
+  const stopRecording = async () => {
+    if (submit) {
+      return;
+    }
+    await audioRecorder.stop();
+    setSubmit(true);
+  };
+
+  useEffect(() => {
+    console.log("Player playing", player.paused);
+  },[player.paused])
+  const playRecording = () => {
+    console.log("Playing", audioRecorder.uri);
+    player.play();
+    setPlayButton(!playButton);
+  };
+
+  const pauseRecoding = () => {
+    console.log("Paused", audioRecorder.uri);
+    player.pause();
+    setPlayButton(!playButton);
+
+  };
+
+  const recordButtonHandler = async () => {
     setStartRecording(true);
+    askForMicroPhonePermission();
+    await audioRecorder.prepareToRecordAsync();
+    await audioRecorder.record();
+    const recordingTime = setTimeout(stopRecording, 5100);
+    return () => clearTimeout(recordingTime);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={{ paddingHorizontal: 16 }}>
+        {notifications && (
+          <Notifications
+            notification={notifications}
+            handleNotifications={setNotifications}
+            message={"Permission denied"}
+          />
+        )}
         <View style={styles.headerContainer}>
           <View>
             <Entypo name="cross" size={24} color={Styles.textSecondary} />
@@ -191,9 +262,35 @@ function VocabularyLessons() {
             <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
               • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
             </Animated.Text>
-            <Pressable style={styles.recordVoiceButton}>
-              <FontAwesome name="square" size={10} color="white" />
-            </Pressable>
+            {/* RECORD BUTTON */}
+            {recorderState.isRecording && (
+              <Pressable
+                onPress={() => stopRecording()}
+                style={styles.recordVoiceButton}
+              >
+                <FontAwesome name="square" size={10} color="white" />
+              </Pressable>
+            )}
+
+            {/* PLAYBACK BUTTON */}
+            {!playButton && !recorderState.isRecording && submit && (
+              <Pressable
+                onPress={() => playRecording()}
+                style={styles.playbackButton}
+              >
+                <Feather name="play" size={16} color="white" />
+              </Pressable>
+            )}
+
+            {/* PAUSE BUTTON */}
+            {playButton && !recorderState.isRecording && (
+              <Pressable
+                onPress={() => pauseRecoding()}
+                style={styles.playbackButton}
+              >
+                <FontAwesome6 name="pause" size={16} color="white" />
+              </Pressable>
+            )}
           </View>
           <View style={styles.recordButtonsContainer}>
             <Pressable style={styles.retryButton}>
@@ -446,6 +543,14 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "white",
     fontWeight: 600,
+  },
+  playbackButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#4eed71",
   },
 });
 

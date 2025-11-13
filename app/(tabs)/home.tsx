@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
-import { Notifications } from "../components/notification";
+import Notifications from "../components/notification";
 import { useState } from "react";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
