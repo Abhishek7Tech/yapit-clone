@@ -14,18 +14,16 @@ import Foundation from "@expo/vector-icons/Foundation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Styles from "../utils/styles";
 import { speak } from "expo-speech";
-// import Animated from "react-native-reanimated";
-// import {
-//   interpolate,
-//   useAnimatedStyle,
-//   useSharedValue,
-//   withTiming,
-// } from "react-native-reanimated";
+
 import { useEffect, useRef, useState } from "react";
+import { opacity } from "react-native-reanimated/lib/typescript/Colors";
 function VocabularyLessons() {
-  // const flip = useSharedValue(0);
   const flip = useRef(new Animated.Value(0)).current;
+  const recordAnim = useRef(new Animated.Value(1)).current;
+
   const [flipped, setFlipped] = useState(false);
+  const [startRecording, setStartRecording] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const params = useLocalSearchParams();
   const speechHandler = () => {
     speak("Kan cha");
@@ -50,109 +48,174 @@ function VocabularyLessons() {
     }).start(() => setFlipped(!flipped));
   };
 
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(recordAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(recordAnim, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [recordAnim]);
+
+  const opacity = recordAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.9, 0.4],
+  });
+
+  const recordButtonHandler = () => {
+    setStartRecording(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.headerContainer}>
-        <View>
-          <Entypo name="cross" size={24} color={Styles.textSecondary} />
+      <View style={{ paddingHorizontal: 16 }}>
+        <View style={styles.headerContainer}>
+          <View>
+            <Entypo name="cross" size={24} color={Styles.textSecondary} />
+          </View>
+          <Text style={styles.headingText}>Vocabulary</Text>
+          <View>
+            <Ionicons name="flag" size={24} color={Styles.textSecondary} />
+          </View>
         </View>
-        <Text style={styles.headingText}>Vocabulary</Text>
-        <View>
-          <Ionicons name="flag" size={24} color={Styles.textSecondary} />
+        {/* PROGRESS */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}></View>
         </View>
-      </View>
-      {/* PROGRESS */}
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBar}></View>
-      </View>
-      {/* LESSON CARD FRONT SIDE */}
-      {/* <View style={{paddingHorizontal: 16}}> */}
-      <View>
-        <Animated.View
-          style={[
-            styles.viewContainer,
-            {
-              transform: [{ rotateY: flipBack }],
-            },
-          ]}
-          pointerEvents={"box-none"}
-        >
-          <Pressable onPress={() => flipCard()}>
-            <View style={{ paddingHorizontal: 32, paddingTop: 32 }}>
-              <View style={styles.instructionContainer}>
-                <Text style={styles.instructionsText}>
-                  Repeat what you hear.
-                </Text>
-                <Text style={styles.lessonText}>
-                  <Text style={{ fontWeight: "bold" }}>3</Text>/08
-                </Text>
-              </View>
-              <Text style={styles.vocalbularyText}>buenaus tardes</Text>
-              <Text style={styles.instructionText}>
-                Tab card to see defination.
-              </Text>
-            </View>
-            <Pressable
-            disabled={flipped}
-              style={styles.speakButton}
-              onPress={() => {
-                speechHandler();
-              }}
-            >
-              <Foundation name="sound" size={24} color="white" />
-            </Pressable>
-          </Pressable>
-        </Animated.View>
-      </View>
-      {/* LESSON CARD BACK SIDE */}
-      <View>
-        <Pressable onPress={() => flipCard()}>
+        {/* LESSON CARD FRONT SIDE */}
+        {/* <View style={{paddingHorizontal: 16}}> */}
+        <View>
           <Animated.View
             style={[
               styles.viewContainer,
               {
-                transform: [{ rotateY: flipFront }],
-                paddingHorizontal: 32,
-                paddingTop: 32,
-                paddingBottom: 24
+                transform: [{ rotateY: flipBack }],
               },
             ]}
+            pointerEvents={"box-none"}
           >
-            <View style={styles.instructionContainer}>
-              <Text style={styles.instructionsText}>Defination</Text>
-              <Text style={styles.lessonText}>
-                <Text style={{ fontWeight: "bold" }}>3</Text>/08
-              </Text>
-            </View>
-            <Text style={styles.vocabularyTextBack}>buenaus tardes</Text>
-            <View style={styles.translationContainer}>
-              <Text style={styles.translationHeading}>Translation:</Text>
-              <Text style={styles.translationText}>good afternoon</Text>
-            </View>
-            <View>
-              <Text style={styles.exampleHeading}>Example:</Text>
-              <Text style={styles.exampleText}>
-                "Buenas tardes, profesora."
-              </Text>
-            </View>
-            <Text
+            <Pressable onPress={() => flipCard()}>
+              <View style={{ paddingHorizontal: 32, paddingTop: 32 }}>
+                <View style={styles.instructionContainer}>
+                  <Text style={styles.instructionsText}>
+                    Repeat what you hear.
+                  </Text>
+                  <Text style={styles.lessonText}>
+                    <Text style={{ fontWeight: "bold" }}>3</Text>/08
+                  </Text>
+                </View>
+                <Text style={styles.vocalbularyText}>buenaus tardes</Text>
+                <Text style={styles.instructionText}>
+                  Tab card to see defination.
+                </Text>
+              </View>
+              <Pressable
+                disabled={flipped}
+                style={styles.speakButton}
+                onPress={() => {
+                  speechHandler();
+                }}
+              >
+                <Foundation name="sound" size={24} color="white" />
+              </Pressable>
+            </Pressable>
+          </Animated.View>
+        </View>
+        {/* LESSON CARD BACK SIDE */}
+        <View>
+          <Pressable onPress={() => flipCard()}>
+            <Animated.View
               style={[
-                styles.instructionText,
-                { marginTop: 12 },
+                styles.viewContainer,
+                {
+                  transform: [{ rotateY: flipFront }],
+                  paddingHorizontal: 32,
+                  paddingTop: 32,
+                  paddingBottom: 24,
+                },
               ]}
             >
-              Tap to go back
-            </Text>
-          </Animated.View>
-        </Pressable>
+              <View style={styles.instructionContainer}>
+                <Text style={styles.instructionsText}>Defination</Text>
+                <Text style={styles.lessonText}>
+                  <Text style={{ fontWeight: "bold" }}>3</Text>/08
+                </Text>
+              </View>
+              <Text style={styles.vocabularyTextBack}>buenaus tardes</Text>
+              <View style={styles.translationContainer}>
+                <Text style={styles.translationHeading}>Translation:</Text>
+                <Text style={styles.translationText}>good afternoon</Text>
+              </View>
+              <View>
+                <Text style={styles.exampleHeading}>Example:</Text>
+                <Text style={styles.exampleText}>
+                  "Buenas tardes, profesora."
+                </Text>
+              </View>
+              <Text style={[styles.instructionText, { marginTop: 12 }]}>
+                Tap to go back
+              </Text>
+            </Animated.View>
+          </Pressable>
+        </View>
       </View>
       {/* </View> */}
-      <View style={styles.recordButtonContainer}>
-        <Pressable style={styles.recordButton}>
-          <FontAwesome name="microphone" size={40} color="white" />
-        </Pressable>
-      </View>
+      {!startRecording && (
+        <View style={styles.recordButtonContainer}>
+          <Pressable
+            onPress={() => recordButtonHandler()}
+            style={styles.recordButton}
+          >
+            <FontAwesome name="microphone" size={40} color="white" />
+          </Pressable>
+        </View>
+      )}
+      {/* Record */}
+      {startRecording && (
+        <View style={styles.recordingContainer}>
+          <View style={styles.recordingWall}></View>
+          <Text style={styles.recordingHeading}>Recording</Text>
+          <Text style={styles.recordingSubHeading}>
+            Repeat the word or phrase from above
+          </Text>
+          <View style={styles.recordPlayerContainer}>
+            <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
+              • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
+            </Animated.Text>
+            <Pressable style={styles.recordVoiceButton}>
+              <FontAwesome name="square" size={10} color="white" />
+            </Pressable>
+          </View>
+          <View style={styles.recordButtonsContainer}>
+            <Pressable style={styles.retryButton}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.submitButton,
+                {
+                  backgroundColor: submit
+                    ? Styles.backgroundSecondary
+                    : Styles.backgroundSecondaryDark,
+                  borderColor: submit ? "black" : "#00000099",
+                },
+              ]}
+            >
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -160,7 +223,6 @@ function VocabularyLessons() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     backgroundColor: Styles.backgroundColor,
   },
   headerContainer: {
@@ -247,7 +309,6 @@ const styles = StyleSheet.create({
     // boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
   },
   recordButtonContainer: {
-    right: 16,
     position: "absolute",
     bottom: 75,
     width: "100%",
@@ -293,6 +354,98 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     color: "#374151",
+  },
+  recordingContainer: {
+    position: "absolute",
+    bottom: 50,
+    width: "100%",
+    zIndex: 999,
+    // left: 16,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
+    boxShadow: "0 -6px 24px rgba(0, 0, 0, 0.08)",
+    backgroundColor: "white",
+  },
+  recordingWall: {
+    height: 6,
+    width: 64,
+    alignSelf: "center",
+    borderRadius: 999,
+    backgroundColor: "#0000001A",
+  },
+  recordingHeading: {
+    marginTop: 8,
+    fontSize: 30,
+    fontWeight: "900",
+    color: Styles.textSecondary,
+    textAlign: "center",
+  },
+  recordingSubHeading: {
+    marginBottom: 12,
+    fontSize: 14,
+    color: "#00000099",
+    textAlign: "center",
+  },
+  recordPlayerContainer: {
+    height: 52,
+    borderRadius: 24,
+    backgroundColor: "#0000000D",
+    paddingHorizontal: 12,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  recordPlayerText: {
+    fontSize: 12,
+    color: "#00000066",
+  },
+  recordVoiceButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    backgroundColor: "#EF4444",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recordButtonsContainer: {
+    marginTop: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 24,
+    paddingHorizontal: 16,
+  },
+  retryButton: {
+    width: 150,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderRadius: 999,
+    backgroundColor: "white",
+    color: "black",
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
+    borderColor: "#ebe6df",
+    boxShadow:
+      "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+  },
+  retryButtonText: {
+    color: "black",
+  },
+  submitButton: {
+    width: 150,
+    paddingVertical: 16,
+    borderRadius: 999,
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    fontWeight: 600,
   },
 });
 
