@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, FontAwesome, Fontisto, Ionicons } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import Styles from "../utils/styles";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Icon } from "@expo/vector-icons/build/createIconSet";
+import useNotificationStore from "../store/thanksNotification";
 
 export default function Notifications({
   handleNotifications,
@@ -25,6 +26,8 @@ export default function Notifications({
 }) {
   const zIndexValue = useRef(new Animated.Value(-1)).current;
   const distanceFromTop = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const store = useNotificationStore();
   const handleNotification = () => {
     Animated.timing(distanceFromTop, {
       toValue: 0,
@@ -40,6 +43,11 @@ export default function Notifications({
     handleNotifications(!notification);
   };
 
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
   useEffect(() => {
     Animated.timing(distanceFromTop, {
       toValue: 2,
@@ -53,6 +61,16 @@ export default function Notifications({
       useNativeDriver: true,
     }).start();
 
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
     setTimeout(() => {
       Animated.timing(distanceFromTop, {
         toValue: 0,
@@ -65,9 +83,20 @@ export default function Notifications({
         duration: 500,
         useNativeDriver: true,
       }).start();
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
       handleNotifications(!notification);
+      if (store.thanksNotification) {
+        store.toggleThanksNotification(false);
+      }
     }, 5000);
-    console.log("Notification", notification);
   }, [notification]);
 
   return (
@@ -86,6 +115,16 @@ export default function Notifications({
       )}
       {icon === "alert" && (
         <Feather name="alert-triangle" size={24} color="#DC2626" />
+      )}
+
+      {icon === "submit" && (
+        <Animated.View style={{ transform: [{ rotate: rotate }] }}>
+          <Fontisto name="circle-o-notch" size={24} color="#FFC12E" />
+        </Animated.View>
+      )}
+
+      {icon === "thanks" && (
+        <FontAwesome name="check-circle" size={24} color="#FFC12E" />
       )}
 
       <Text style={styles.notificationsText}>{message}</Text>

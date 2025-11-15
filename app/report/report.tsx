@@ -12,84 +12,133 @@ import { router } from "expo-router";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import Notifications from "../components/notification";
+import { BlurView } from "expo-blur";
+import useLessonsStore from "../store/allLessonsStore";
+import useNotificationStore from "../store/thanksNotification";
 
 export default function ReportAnIssue() {
   const [reason, setReason] = useState("");
   const [explaination, setExplaination] = useState("");
   const [notifications, setNotifications] = useState(false);
+  const [submitNotification, setSubmitNotification] = useState(false);
+  const store = useNotificationStore();
+  const resetForm = () => {
+    setSubmitNotification(false);
+    setExplaination("");
+    setReason("");
+  };
   const handleSubmit = () => {
     if (!reason || !explaination) {
-        setNotifications(true);
-        return;
+      setNotifications(true);
+      return;
     }
     console.log("Inputs", reason, explaination);
+    setSubmitNotification(true);
+    setTimeout(() => {
+      resetForm();
+      store.toggleThanksNotification(true);
+      router.navigate("/home");
+    }, 3000);
   };
   return (
-    <SafeAreaView style={styles.container}>
-      {notifications && (
-        <View>
-        <Notifications
-          notification={notifications}
-          handleNotifications={setNotifications}
-          message={"Please fill in all the fields."}
-          icon="alert"
-        />
+    <BlurView
+      style={styles.blurContainer}
+      tint="extraLight"
+      intensity={submitNotification ? 90 : 0}
+    >
+      {submitNotification && (
+        <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
+          <Notifications
+            notification={notifications}
+            handleNotifications={setNotifications}
+            message={"Submitting report..."}
+            icon="submit"
+          />
         </View>
       )}
-      {/* ISSUE */}
-      <View style={styles.headerContainer}>
-        <View>
-          <Pressable onPress={() => router.back()}>
-            <Entypo name="cross" size={24} color={Styles.textSecondary} />
+
+      <SafeAreaView
+        style={[styles.container, { zIndex: submitNotification ? -100 : 0 }]}
+      >
+        {store.thanksNotification && (
+          <View>
+            <Notifications
+              notification={notifications}
+              handleNotifications={setNotifications}
+              message={"Thanks for the report!"}
+              icon="thanks"
+            />
+          </View>
+        )}
+        {notifications && !submitNotification && (
+          <View>
+            <Notifications
+              notification={notifications}
+              handleNotifications={setNotifications}
+              message={"Please fill in all the fields."}
+              icon="alert"
+            />
+          </View>
+        )}
+
+        {/* ISSUE */}
+
+        <View style={[styles.headerContainer]}>
+          <View>
+            <Pressable onPress={() => router.back()}>
+              <Entypo name="cross" size={24} color={Styles.textSecondary} />
+            </Pressable>
+          </View>
+          <Text style={styles.headingText}>Report an Issue</Text>
+          <View></View>
+        </View>
+
+        <View style={styles.formContainer}>
+          <View>
+            <Text style={styles.headingLabel}>Reason</Text>
+            <TextInput
+              style={styles.inputText}
+              placeholder="What's the reason?"
+              inputMode="text"
+              value={reason}
+              onChangeText={setReason}
+            ></TextInput>
+          </View>
+          <View>
+            <Text style={styles.headingLabel}>Explain</Text>
+            <TextInput
+              style={[
+                styles.inputText,
+                { height: 256, textAlignVertical: "top" },
+              ]}
+              placeholder="Tell us more..."
+              inputMode="text"
+              value={explaination}
+              onChangeText={setExplaination}
+            ></TextInput>
+          </View>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={styles.button}
+            onPress={() => handleSubmit()}
+            //   onPress={() => router.navigate("/lesson/3?seq=1")}
+          >
+            <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
         </View>
-        <Text style={styles.headingText}>Report an Issue</Text>
-        <View></View>
-      </View>
-
-      <View style={styles.formContainer}>
-        <View>
-          <Text style={styles.headingLabel}>Reason</Text>
-          <TextInput
-            style={styles.inputText}
-            placeholder="What's the reason?"
-            inputMode="text"
-            value={reason}
-            onChangeText={setReason}
-          ></TextInput>
-        </View>
-        <View>
-          <Text style={styles.headingLabel}>Explain</Text>
-          <TextInput
-            style={[
-              styles.inputText,
-              { height: 256, textAlignVertical: "top" },
-            ]}
-            placeholder="Tell us more..."
-            inputMode="text"
-            value={explaination}
-            onChangeText={setExplaination}
-          ></TextInput>
-        </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={styles.button}
-          onPress={() => handleSubmit()}
-          //   onPress={() => router.navigate("/lesson/3?seq=1")}
-        >
-          <Text style={styles.buttonText}>Continue</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </BlurView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: -100,
     flex: 1,
-    backgroundColor: Styles.backgroundColor,
     paddingHorizontal: 16,
+    backgroundColor: Styles.backgroundColor,
   },
   headerContainer: {
     flexDirection: "row",
@@ -139,5 +188,19 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
     textAlign: "center",
+  },
+  blurContainer: {
+    flex: 1,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    // paddingHorizontal: 16,
+    zIndex: 200,
+    position: "relative",
+
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
   },
 });

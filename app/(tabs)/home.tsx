@@ -16,6 +16,7 @@ import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
 import Notifications from "../components/notification";
 import { useState } from "react";
+import useNotificationStore from "../store/thanksNotification";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
 export default function HomeTab() {
@@ -24,8 +25,20 @@ export default function HomeTab() {
   const quizHandler = () => {
     setNotifications(true);
   };
+  const store = useNotificationStore();
+
   return (
     <SafeAreaView style={styles.container}>
+      {store.thanksNotification && (
+        <View>
+          <Notifications
+            notification={notifications}
+            handleNotifications={setNotifications}
+            message={"Thanks for the report!"}
+            icon="thanks"
+          />
+        </View>
+      )}
       <View>
         {notifications && (
           <Notifications
