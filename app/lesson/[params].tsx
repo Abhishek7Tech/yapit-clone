@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   View,
   Text,
@@ -29,7 +29,6 @@ import {
 } from "expo-audio";
 
 import { useEffect, useRef, useState } from "react";
-import { opacity } from "react-native-reanimated/lib/typescript/Colors";
 import Notifications from "../components/notification";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
@@ -151,6 +150,13 @@ function VocabularyLessons() {
     return () => clearTimeout(recordingTime);
   };
 
+  const retryHandler = () => {
+    setStartRecording(false);
+    setSubmit(false);
+    setPlayButton(false);
+    player.remove();
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -163,9 +169,9 @@ function VocabularyLessons() {
           />
         )}
         <View style={styles.headerContainer}>
-          <View>
+          <Pressable onPress={() => router.navigate("/home")}>
             <Entypo name="cross" size={24} color={Styles.textSecondary} />
-          </View>
+          </Pressable>
           <Text style={styles.headingText}>Vocabulary</Text>
           <View>
             <Ionicons name="flag" size={24} color={Styles.textSecondary} />
@@ -306,7 +312,7 @@ function VocabularyLessons() {
             )}
           </View>
           <View style={styles.recordButtonsContainer}>
-            <Pressable style={styles.retryButton}>
+            <Pressable onPress={() => retryHandler()} style={styles.retryButton}>
               <Text style={styles.retryButtonText}>Retry</Text>
             </Pressable>
 
