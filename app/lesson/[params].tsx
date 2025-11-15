@@ -19,7 +19,6 @@ import Styles from "../utils/styles";
 import { speak } from "expo-speech";
 import {
   AudioModule,
-  createAudioPlayer,
   RecordingPresets,
   setAudioModeAsync,
   useAudioPlayer,
@@ -122,7 +121,6 @@ function VocabularyLessons() {
     setSubmit(true);
   };
 
-
   const playRecording = () => {
     setPlayButton(true);
     player.seekTo(0);
@@ -155,7 +153,7 @@ function VocabularyLessons() {
     setSubmit(false);
     setPlayButton(false);
     player.remove();
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -166,15 +164,20 @@ function VocabularyLessons() {
             notification={notifications}
             handleNotifications={setNotifications}
             message={"Permission denied"}
+            icon="notification"
           />
         )}
         <View style={styles.headerContainer}>
-          <Pressable onPress={() => router.navigate("/home")}>
-            <Entypo name="cross" size={24} color={Styles.textSecondary} />
-          </Pressable>
+          <View>
+            <Pressable onPress={() => router.navigate("/home")}>
+              <Entypo name="cross" size={24} color={Styles.textSecondary} />
+            </Pressable>
+          </View>
           <Text style={styles.headingText}>Vocabulary</Text>
           <View>
-            <Ionicons name="flag" size={24} color={Styles.textSecondary} />
+            <Pressable onPress={() => router.navigate("/report/report")}>
+              <Ionicons name="flag" size={24} color={Styles.textSecondary} />
+            </Pressable>
           </View>
         </View>
         {/* PROGRESS */}
@@ -312,7 +315,10 @@ function VocabularyLessons() {
             )}
           </View>
           <View style={styles.recordButtonsContainer}>
-            <Pressable onPress={() => retryHandler()} style={styles.retryButton}>
+            <Pressable
+              onPress={() => retryHandler()}
+              style={styles.retryButton}
+            >
               <Text style={styles.retryButtonText}>Retry</Text>
             </Pressable>
 

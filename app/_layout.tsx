@@ -33,10 +33,13 @@ export default function RootLayout() {
 
       <Stack.Screen
         name="lesson"
-        
         options={{
           headerShown: false,
         }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="report"
+        options={{ headerShown: false }}
       ></Stack.Screen>
     </Stack>
   );

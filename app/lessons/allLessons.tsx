@@ -19,6 +19,7 @@ export default function AllLesson() {
             notification={notifications}
             handleNotifications={setNotifications}
             message={"No score yet for this lesson."}
+            icon="notification"
           />
         )}
 

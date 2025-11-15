@@ -1,8 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import Styles from "../utils/styles";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 const YappyImg = require("@/assets/images/yappy.webp");
 export default function Lesson() {
@@ -54,7 +53,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: "100%",
     position: "absolute",
-    bottom: 75,
+    bottom: StatusBar.currentHeight,
 
   },
   button: {

@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -10,15 +10,18 @@ import {
 
 import Styles from "../utils/styles";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Icon } from "@expo/vector-icons/build/createIconSet";
 
 export default function Notifications({
   handleNotifications,
   notification,
   message,
+  icon,
 }: {
   message: String;
   notification: Boolean;
   handleNotifications: Dispatch<SetStateAction<boolean>>;
+  icon: string;
 }) {
   const zIndexValue = useRef(new Animated.Value(-1)).current;
   const distanceFromTop = useRef(new Animated.Value(0)).current;
@@ -36,7 +39,7 @@ export default function Notifications({
     }).start();
     handleNotifications(!notification);
   };
-  
+
   useEffect(() => {
     Animated.timing(distanceFromTop, {
       toValue: 2,
@@ -74,11 +77,17 @@ export default function Notifications({
         { zIndex: zIndexValue, transform: [{ translateY: distanceFromTop }] },
       ]}
     >
-      <Ionicons
-        name="notifications-circle-outline"
-        size={24}
-        color={"#3B82F6"}
-      />
+      {icon === "notification" && (
+        <Ionicons
+          name="notifications-circle-outline"
+          size={24}
+          color={"#3B82F6"}
+        />
+      )}
+      {icon === "alert" && (
+        <Feather name="alert-triangle" size={24} color="#DC2626" />
+      )}
+
       <Text style={styles.notificationsText}>{message}</Text>
       <Pressable onPress={() => handleNotification()}>
         <Text style={styles.buttonText}>x</Text>

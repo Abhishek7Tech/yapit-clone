@@ -32,6 +32,7 @@ export default function HomeTab() {
             notification={notifications}
             handleNotifications={setNotifications}
             message={"Finish 5 more lessons to unlock the quiz."}
+            icon="notification"
           />
         )}
         <View style={styles.headingView}>
