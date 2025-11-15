@@ -23,6 +23,7 @@ import {
   RecordingPresets,
   setAudioModeAsync,
   useAudioPlayer,
+  useAudioPlayerStatus,
   useAudioRecorder,
   useAudioRecorderState,
 } from "expo-audio";
@@ -41,7 +42,8 @@ function VocabularyLessons() {
   const [notifications, setNotifications] = useState(false);
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const player = useAudioPlayer(audioRecorder.uri);
+  const player = useAudioPlayer(null);
+  const playerStatus = useAudioPlayerStatus(player);
   const recorderState = useAudioRecorderState(audioRecorder);
 
   const params = useLocalSearchParams();
@@ -93,16 +95,20 @@ function VocabularyLessons() {
   });
 
   const askForMicroPhonePermission = async () => {
-    const status = await AudioModule.requestRecordingPermissionsAsync();
-    console.log("Permission", status)
-    if (!status.granted) {
-      setNotifications(true);
-      return;
+    try {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      if (!status.granted) {
+        setNotifications(true);
+        return false;
+      }
+      setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+      });
+      return true;
+    } catch (error) {
+      console.log("Something went wrong.", error);
     }
-    setAudioModeAsync({
-      playsInSilentMode: true,
-      allowsRecording: true,
-    });
   };
 
   const stopRecording = async () => {
@@ -110,28 +116,35 @@ function VocabularyLessons() {
       return;
     }
     await audioRecorder.stop();
+
+    if (audioRecorder.uri) {
+      player.replace(audioRecorder.uri);
+    }
     setSubmit(true);
   };
 
-  useEffect(() => {
-    console.log("Player playing", player.paused);
-  },[player.paused])
+
   const playRecording = () => {
-    console.log("Playing", audioRecorder.uri);
+    setPlayButton(true);
+    player.seekTo(0);
     player.play();
-    setPlayButton(!playButton);
+    const playingTime = setTimeout(
+      () => pauseRecoding(),
+      player.duration * 1000
+    );
+    return () => clearTimeout(playingTime);
   };
 
   const pauseRecoding = () => {
     console.log("Paused", audioRecorder.uri);
+    setPlayButton(false);
     player.pause();
-    setPlayButton(!playButton);
-
   };
 
   const recordButtonHandler = async () => {
     setStartRecording(true);
-    askForMicroPhonePermission();
+    const hasPermission = await askForMicroPhonePermission();
+    if (!hasPermission) return;
     await audioRecorder.prepareToRecordAsync();
     await audioRecorder.record();
     const recordingTime = setTimeout(stopRecording, 5100);
