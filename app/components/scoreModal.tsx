@@ -1,18 +1,53 @@
-import { Modal, StyleSheet, View, Text, StatusBar, Dimensions } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  Dimensions,
+  Animated,
+  Pressable,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
-const screenDimensions = Dimensions.get('screen').height;
+// import  from "react-native-reanimated";
+import { useEffect, useRef } from "react";
+const screenDimensions = Dimensions.get("screen").height;
 
-export default function ScoreModal({ showModal }: { showModal: boolean }) {
+export default function ScoreModal({
+  isVisible,
+  setIsVisible,
+}: {
+  isVisible: boolean;
+  setIsVisible: (isVisible: boolean) => void;
+}) {
+  const slideAnim = useRef(new Animated.Value(200)).current;
+  useEffect(() => {
+    if (isVisible) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isVisible, slideAnim]);
+  const hideModalHandler = () => {
+    Animated.timing(slideAnim, {
+      toValue: 200,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setIsVisible(false));
+  };
   return (
     <SafeAreaView style={styles.modalContainer}>
-      <Modal
-        style={styles.scoreModal}
-        animationType="slide"
-        transparent={true}
-        visible={showModal}
-        backdropColor={Styles.backgroundColor}
-        
+      <Pressable
+        onPress={() => hideModalHandler()}
+        style={{ flex: 1 }}
+      >
+        <View></View>
+      </Pressable>
+      <Animated.View
+        style={[styles.scoreModal, { transform: [{ translateY: slideAnim }] }]}
       >
         <View>
           <View style={styles.scoreContainer}>
@@ -26,30 +61,29 @@ export default function ScoreModal({ showModal }: { showModal: boolean }) {
             accurately produced.
           </Text>
         </View>
-      </Modal>
+      </Animated.View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   modalContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
     flex: 1,
-    backgroundColor: "red",
-    height: 300,
-    position: "relative"
-
+    backgroundColor: "transparent",
+    zIndex: 400,
+    justifyContent: "flex-end",
   },
   scoreModal: {
-    position: "absolute",
-    bottom: StatusBar.currentHeight,
     paddingTop: 12,
     paddingHorizontal: 20,
     paddingBottom: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: Styles.backgroundColor,
-    height: 500,  
-},
+  },
   scoreContainer: {
     flexDirection: "column",
     alignItems: "center",
@@ -83,6 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Styles.textSecondary,
     marginBottom: 8,
-    textAlign: "center"
+    textAlign: "center",
   },
 });
