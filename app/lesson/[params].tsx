@@ -366,25 +366,25 @@ function VocabularyLessons() {
                     >
                       <Text style={styles.resultScoreButtonText}>64</Text>
                     </Pressable>
-                    <Pressable>
+                    <Pressable onPress={() => setShowModal(true)}>
                       <Text style={styles.resultScoreText}>Accuracy</Text>
                     </Pressable>
                   </View>
 
                   <View style={styles.resultScore}>
-                    <Pressable style={styles.resultScoreButton}>
+                    <Pressable onPress={() => setShowModal(true)} style={styles.resultScoreButton}>
                       <Text style={styles.resultScoreButtonText}>63</Text>
                     </Pressable>
-                    <Pressable>
+                    <Pressable onPress={() => setShowModal(true)}>
                       <Text style={styles.resultScoreText}>Fluency</Text>
                     </Pressable>
                   </View>
 
                   <View style={styles.resultScore}>
-                    <Pressable style={styles.resultScoreButton}>
+                    <Pressable onPress={() => setShowModal(true)} style={styles.resultScoreButton}>
                       <Text style={styles.resultScoreButtonText}>62</Text>
                     </Pressable>
-                    <Pressable>
+                    <Pressable onPress={() => setShowModal(true)}>
                       <Text style={styles.resultScoreText}>Intonation</Text>
                     </Pressable>
                   </View>

@@ -7,6 +7,7 @@ import {
   Dimensions,
   Animated,
   Pressable,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
@@ -34,16 +35,18 @@ export default function ScoreModal({
   const hideModalHandler = () => {
     Animated.timing(slideAnim, {
       toValue: 200,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
     }).start(() => setIsVisible(false));
   };
+
+  const DummyDetails = [
+    "Audio quality is poor.",
+    "Speech is absent or unintelligible.",
+  ];
   return (
     <SafeAreaView style={styles.modalContainer}>
-      <Pressable
-        onPress={() => hideModalHandler()}
-        style={{ flex: 1 }}
-      >
+      <Pressable onPress={() => hideModalHandler()} style={{ flex: 1 }}>
         <View></View>
       </Pressable>
       <Animated.View
@@ -60,6 +63,14 @@ export default function ScoreModal({
             The pronunciation is not very clear, and the sounds are not
             accurately produced.
           </Text>
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailsHeading}>Details</Text>
+            <FlatList
+            data={DummyDetails}
+            keyExtractor={item => item}
+            renderItem={({item}) => <Text style={styles.detailText}>  <Text style={{ fontSize: 16 }}>•</Text> {item}</Text>}
+            />
+          </View>
         </View>
       </Animated.View>
     </SafeAreaView>
@@ -83,6 +94,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: Styles.backgroundColor,
+    minHeight: screenDimensions * 0.30
   },
   scoreContainer: {
     flexDirection: "column",
@@ -119,4 +131,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: "center",
   },
+  detailsContainer: {
+    marginTop: 12,
+  },
+  detailsHeading: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#6B7280",
+  },
+  detailText: {
+    fontSize: 12,
+    color: "#374151"
+  }
 });
