@@ -29,6 +29,7 @@ import {
 
 import { useEffect, useRef, useState } from "react";
 import Notifications from "../components/notification";
+import ScoreModal from "../components/scoreModal";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
   const recordAnim = useRef(new Animated.Value(1)).current;
@@ -45,6 +46,9 @@ function VocabularyLessons() {
 
   const [showResults, setShowResults] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const player = useAudioPlayer(null);
@@ -147,6 +151,7 @@ function VocabularyLessons() {
 
   const recordButtonHandler = async () => {
     setStartRecording(true);
+    console.log("Clicked");
     const hasPermission = await askForMicroPhonePermission();
     if (!hasPermission) return;
     await audioRecorder.prepareToRecordAsync();
@@ -348,7 +353,7 @@ function VocabularyLessons() {
 
               <View style={styles.resultScoreContainer}>
                 <View style={styles.resultScore}>
-                  <Pressable style={styles.resultScoreButton}>
+                  <Pressable onPress={() =>setShowModal(true)} style={styles.resultScoreButton}>
                     <Text style={styles.resultScoreButtonText}>64</Text>
                   </Pressable>
                   <Pressable>
@@ -465,6 +470,7 @@ function VocabularyLessons() {
           </View>
         </View>
       )}
+     {showModal && <ScoreModal showModal={showModal}/> }
     </SafeAreaView>
   );
 }
