@@ -35,9 +35,16 @@ function VocabularyLessons() {
 
   const [flipped, setFlipped] = useState(false);
   const [startRecording, setStartRecording] = useState(false);
+  // Handles submit button state
   const [submit, setSubmit] = useState(false);
+  // Handles audio submission state
+  const [submitAudio, setSubmitAudio] = useState(false);
+
   const [playButton, setPlayButton] = useState(false);
   const [notifications, setNotifications] = useState(false);
+
+  const [showResults, setShowResults] = useState(false);
+  const [loadingResults, setLoadingResults] = useState(false);
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const player = useAudioPlayer(null);
@@ -152,7 +159,15 @@ function VocabularyLessons() {
     setStartRecording(false);
     setSubmit(false);
     setPlayButton(false);
+    setShowResults(false);
+    setSubmitAudio(false);
     player.remove();
+  };
+
+  const submitAudioHandler = () => {
+    setSubmitAudio(true);
+    setShowResults(true);
+    setLoadingResults(true);
   };
 
   return (
@@ -186,7 +201,15 @@ function VocabularyLessons() {
         </View>
         {/* LESSON CARD FRONT SIDE */}
         {/* <View style={{paddingHorizontal: 16}}> */}
-        <View>
+        <View
+          style={{
+            position: "relative",
+            paddingBottom: 12,
+            minHeight: 280,
+            maxHeight: "auto",
+          }}
+        >
+          {/* <View> */}
           <Animated.View
             style={[
               styles.viewContainer,
@@ -222,9 +245,9 @@ function VocabularyLessons() {
               </Pressable>
             </Pressable>
           </Animated.View>
-        </View>
-        {/* LESSON CARD BACK SIDE */}
-        <View>
+          {/* </View> */}
+          {/* LESSON CARD BACK SIDE */}
+          {/* <View> */}
           <Pressable onPress={() => flipCard()}>
             <Animated.View
               style={[
@@ -259,7 +282,46 @@ function VocabularyLessons() {
               </Text>
             </Animated.View>
           </Pressable>
+          {/* </View> */}
         </View>
+
+        {submitAudio && (
+          <View style={styles.resultAudioContainer}>
+            <Text style={styles.resultAudioText}>Poor</Text>
+            <View style={[styles.recordPlayerContainer, { borderRadius: 4 }]}>
+              <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
+                • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
+              </Animated.Text>
+              {/* RECORD BUTTON */}
+
+              {/* PLAYBACK BUTTON */}
+              {!playButton && !recorderState.isRecording && submit && (
+                <Pressable
+                  onPress={() => playRecording()}
+                  style={[
+                    styles.playbackButton,
+                    { backgroundColor: Styles.backgroundTertiary },
+                  ]}
+                >
+                  <Feather name="play" size={16} color="white" />
+                </Pressable>
+              )}
+
+              {/* PAUSE BUTTON */}
+              {playButton && !recorderState.isRecording && (
+                <Pressable
+                  onPress={() => pauseRecoding()}
+                  style={[
+                    styles.playbackButton,
+                    { backgroundColor: Styles.backgroundTertiary },
+                  ]}
+                >
+                  <FontAwesome6 name="pause" size={16} color="white" />
+                </Pressable>
+              )}
+            </View>
+          </View>
+        )}
       </View>
       {/* </View> */}
       {!startRecording && (
@@ -274,46 +336,89 @@ function VocabularyLessons() {
       )}
       {/* Record */}
       {startRecording && (
-        <View style={styles.recordingContainer}>
-          <View style={styles.recordingWall}></View>
-          <Text style={styles.recordingHeading}>Recording</Text>
-          <Text style={styles.recordingSubHeading}>
-            Repeat the word or phrase from above
-          </Text>
-          <View style={styles.recordPlayerContainer}>
-            <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
-              • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
-            </Animated.Text>
-            {/* RECORD BUTTON */}
-            {recorderState.isRecording && (
-              <Pressable
-                onPress={() => stopRecording()}
-                style={styles.recordVoiceButton}
-              >
-                <FontAwesome name="square" size={10} color="white" />
-              </Pressable>
-            )}
+        <View style={[styles.recordAndResultContainer, {backgroundColor: showResults ? Styles.backgroundColor : "white"}]}>
+          {showResults && (
+            <View style={styles.resultContainer}>
+              <View style={styles.result}>
+                <View style={styles.resultIcon}>
+                  <Entypo name="cross" size={24} color="white" />
+                </View>
+                <Text style={styles.resultText}>Incorrect</Text>
+              </View>
 
-            {/* PLAYBACK BUTTON */}
-            {!playButton && !recorderState.isRecording && submit && (
-              <Pressable
-                onPress={() => playRecording()}
-                style={styles.playbackButton}
-              >
-                <Feather name="play" size={16} color="white" />
-              </Pressable>
-            )}
+              <View style={styles.resultScoreContainer}>
+                <View style={styles.resultScore}>
+                  <Pressable style={styles.resultScoreButton}>
+                    <Text style={styles.resultScoreButtonText}>64</Text>
+                  </Pressable>
+                  <Pressable>
+                    <Text style={styles.resultScoreText}>Accuracy</Text>
+                  </Pressable>
+                </View>
 
-            {/* PAUSE BUTTON */}
-            {playButton && !recorderState.isRecording && (
-              <Pressable
-                onPress={() => pauseRecoding()}
-                style={styles.playbackButton}
-              >
-                <FontAwesome6 name="pause" size={16} color="white" />
-              </Pressable>
-            )}
-          </View>
+                <View style={styles.resultScore}>
+                  <Pressable style={styles.resultScoreButton}>
+                    <Text style={styles.resultScoreButtonText}>63</Text>
+                  </Pressable>
+                  <Pressable>
+                    <Text style={styles.resultScoreText}>Fluency</Text>
+                  </Pressable>
+                </View>
+
+                <View style={styles.resultScore}>
+                  <Pressable style={styles.resultScoreButton}>
+                    <Text style={styles.resultScoreButtonText}>62</Text>
+                  </Pressable>
+                  <Pressable>
+                    <Text style={styles.resultScoreText}>Intonation</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          )}
+          {!showResults && (
+            <View style={styles.recordingContainer}>
+              <View style={styles.recordingWall}></View>
+              <Text style={styles.recordingHeading}>Recording</Text>
+              <Text style={styles.recordingSubHeading}>
+                Repeat the word or phrase from above
+              </Text>
+              <View style={styles.recordPlayerContainer}>
+                <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
+                  • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
+                </Animated.Text>
+                {/* RECORD BUTTON */}
+                {recorderState.isRecording && (
+                  <Pressable
+                    onPress={() => stopRecording()}
+                    style={styles.recordVoiceButton}
+                  >
+                    <FontAwesome name="square" size={10} color="white" />
+                  </Pressable>
+                )}
+
+                {/* PLAYBACK BUTTON */}
+                {!playButton && !recorderState.isRecording && submit && (
+                  <Pressable
+                    onPress={() => playRecording()}
+                    style={styles.playbackButton}
+                  >
+                    <Feather name="play" size={16} color="white" />
+                  </Pressable>
+                )}
+
+                {/* PAUSE BUTTON */}
+                {playButton && !recorderState.isRecording && (
+                  <Pressable
+                    onPress={() => pauseRecoding()}
+                    style={styles.playbackButton}
+                  >
+                    <FontAwesome6 name="pause" size={16} color="white" />
+                  </Pressable>
+                )}
+              </View>
+            </View>
+          )}
           <View style={styles.recordButtonsContainer}>
             <Pressable
               onPress={() => retryHandler()}
@@ -322,19 +427,41 @@ function VocabularyLessons() {
               <Text style={styles.retryButtonText}>Retry</Text>
             </Pressable>
 
-            <Pressable
-              style={[
-                styles.submitButton,
-                {
-                  backgroundColor: submit
-                    ? Styles.backgroundSecondary
-                    : Styles.backgroundSecondaryDark,
-                  borderColor: submit ? "black" : "#00000099",
-                },
-              ]}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </Pressable>
+            {!showResults && (
+              <Pressable
+                onPress={() => submitAudioHandler()}
+                disabled={!submit}
+                style={[
+                  styles.submitButton,
+                  {
+                    backgroundColor: submit
+                      ? Styles.backgroundSecondary
+                      : Styles.backgroundSecondaryDark,
+                    borderColor: submit ? "black" : "#00000099",
+                  },
+                ]}
+              >
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </Pressable>
+            )}
+
+            {showResults && (
+              <Pressable
+                onPress={() => {}}
+                disabled={!loadingResults}
+                style={[
+                  styles.submitButton,
+                  {
+                    backgroundColor: loadingResults
+                      ? Styles.backgroundSecondary
+                      : Styles.backgroundSecondaryDark,
+                    borderColor: loadingResults ? "black" : "#00000099",
+                  },
+                ]}
+              >
+                <Text style={styles.submitButtonText}>Next</Text>
+              </Pressable>
+            )}
           </View>
         </View>
       )}
@@ -477,20 +604,22 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     color: "#374151",
   },
-  recordingContainer: {
+  recordAndResultContainer: {
     position: "absolute",
     bottom: 50,
     width: "100%",
     zIndex: 999,
+    paddingBottom: 16,
+  },
+  recordingContainer: {
     // left: 16,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 16,
     boxShadow: "0 -6px 24px rgba(0, 0, 0, 0.08)",
-    backgroundColor: "white",
   },
+
   recordingWall: {
     height: 6,
     width: 64,
@@ -512,7 +641,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   recordPlayerContainer: {
-    height: 52,
+    height: 48,
     borderRadius: 24,
     backgroundColor: "#0000000D",
     paddingHorizontal: 12,
@@ -537,7 +666,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 24,
-    paddingHorizontal: 16,
+    paddingHorizontal: 48,
   },
   retryButton: {
     width: 150,
@@ -576,6 +705,89 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#4eed71",
+  },
+
+  resultAudioContainer: {
+    marginTop: 12,
+    backgroundColor: "white",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#0000000D",
+  },
+  resultAudioText: {
+    marginBottom: 8,
+    fontSize: 12,
+    color: "#2D1C1C",
+    fontWeight: "600",
+  },
+
+  resultContainer: {
+    backgroundColor: Styles.backgroundColor,
+    paddingTop: 12,
+    paddingBottom: 8,
+    borderTopWidth: 4,
+    borderTopColor: "rgb(246, 178, 178)",
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    paddingHorizontal: 16,
+  },
+  result: {
+    gap: 8,
+    marginLeft: 20,
+    marginBottom: 16,
+  },
+  resultIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f04648",
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
+    borderColor: "#bf383a",
+  },
+  resultText: {
+    fontWeight: "600",
+    color: Styles.textSecondary,
+    fontSize: 24,
+  },
+  resultScoreContainer: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 40,
+  },
+  resultScore: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  resultScoreButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
+    backgroundColor: Styles.backgroundTertiary,
+    shadowColor: "#e4a92d",
+    shadowOffset: { height: 3, width: 1 },
+    shadowRadius: 3,
+    boxShadow: "1px 3px 1px #e4a92d",
+    elevation: 5,
+  },
+  resultScoreButtonText: {
+    color: "#141414",
+    fontWeight: "500",
+    fontSize: 14,
+  },
+  resultScoreText: {
+    fontSize: 14,
+    color: "#2D1C1CE6",
   },
 });
 
