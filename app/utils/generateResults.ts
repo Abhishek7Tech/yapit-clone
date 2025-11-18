@@ -6,6 +6,7 @@ export default function generateResults(
   const accuracyScore = accuracyResults(accuracy);
   const fluencyScore = fluencyResults(fluency);
   const intonationScore = intonationResults(intonation);
+
   return {
     accuracy: { title: "Accuracy", ...accuracyScore },
     fluency: { title: "Fluency", ...fluencyScore },

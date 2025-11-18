@@ -30,6 +30,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import Notifications from "../components/notification";
 import ScoreModal from "../components/scoreModal";
+import scoreStyles from "../utils/scoreStyles";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
   const recordAnim = useRef(new Animated.Value(1)).current;
@@ -73,17 +74,18 @@ function VocabularyLessons() {
   };
 
   type GradesData = {
-    title: string,
-     score: number;
+    title: string;
+    score: number;
     feedback: string;
     grade: string;
     remarks: string[];
-  }
+  };
 
   type Grades = {
-    accuracy: GradesData,
-    fluency: GradesData,
-    intonation: GradesData
+    total: number;
+    accuracy: GradesData;
+    fluency: GradesData;
+    intonation: GradesData;
   };
 
   useEffect(() => {
@@ -147,7 +149,7 @@ function VocabularyLessons() {
   const showModalHandler = (gradesData: GradesData) => {
     setShowModal(true);
     setGradingData(gradesData);
-  }
+  };
   const askForMicroPhonePermission = async () => {
     try {
       const status = await AudioModule.requestRecordingPermissionsAsync();
@@ -235,6 +237,8 @@ function VocabularyLessons() {
       </SafeAreaView>
     );
   }
+
+  console.log("Styles", scoreStyles("low"));
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -432,33 +436,66 @@ function VocabularyLessons() {
             {showResults && gradeResults && (
               <View style={styles.resultContainer}>
                 <View style={styles.result}>
-                  <View style={styles.resultIcon}>
-                    <Entypo name="cross" size={24} color="white" />
-                  </View>
-                  <Text style={styles.resultText}>Incorrect</Text>
+                  {gradeResults.total > 240 ? (
+                    <View
+                      style={[
+                        styles.resultIcon,
+                        { backgroundColor: "#f04648", borderColor: "#bf383a" },
+                      ]}
+                    >
+                      <Entypo name="cross" size={24} color="white" />
+                    </View>
+                  ) : (
+                    <View
+                      style={[
+                        styles.resultIcon,
+                        { backgroundColor: "#4eed71", borderColor: "#41ca55" },
+                      ]}
+                    >
+                      <Entypo name="check" size={24} color="white" />
+                    </View>
+                  )}
+
+                  <Text style={styles.resultText}>
+                    {gradeResults.total > 240 ? "Correct" : "Incorrect"}
+                  </Text>
                 </View>
 
                 <View style={styles.resultScoreContainer}>
                   <View style={styles.resultScore}>
                     <Pressable
                       onPress={() => showModalHandler(gradeResults.accuracy)}
-                      style={styles.resultScoreButton}
+                      style={[
+                        styles.resultScoreButton,
+                        scoreStyles(gradeResults.accuracy.grade),
+                      ]}
                     >
-                      <Text style={styles.resultScoreButtonText}>{gradeResults?.accuracy.score}</Text>
+                      <Text style={styles.resultScoreButtonText}>
+                        {gradeResults?.accuracy.score}
+                      </Text>
                     </Pressable>
-                    <Pressable onPress={() =>  showModalHandler(gradeResults.accuracy)}>
+                    <Pressable
+                      onPress={() => showModalHandler(gradeResults.accuracy)}
+                    >
                       <Text style={styles.resultScoreText}>Accuracy</Text>
                     </Pressable>
                   </View>
 
                   <View style={styles.resultScore}>
                     <Pressable
-                      onPress={() =>  showModalHandler(gradeResults.fluency)}
-                      style={styles.resultScoreButton}
+                      onPress={() => showModalHandler(gradeResults.fluency)}
+                      style={[
+                        styles.resultScoreButton,
+                        scoreStyles(gradeResults.fluency.grade),
+                      ]}
                     >
-                      <Text style={styles.resultScoreButtonText}>{gradeResults?.fluency.score}</Text>
+                      <Text style={styles.resultScoreButtonText}>
+                        {gradeResults?.fluency.score}
+                      </Text>
                     </Pressable>
-                    <Pressable onPress={() => showModalHandler(gradeResults.fluency)}>
+                    <Pressable
+                      onPress={() => showModalHandler(gradeResults.fluency)}
+                    >
                       <Text style={styles.resultScoreText}>Fluency</Text>
                     </Pressable>
                   </View>
@@ -466,11 +503,18 @@ function VocabularyLessons() {
                   <View style={styles.resultScore}>
                     <Pressable
                       onPress={() => showModalHandler(gradeResults.intonation)}
-                      style={styles.resultScoreButton}
+                      style={[
+                        styles.resultScoreButton,
+                        scoreStyles(gradeResults.intonation.grade),
+                      ]}
                     >
-                      <Text style={styles.resultScoreButtonText}>{gradeResults?.intonation.score}</Text>
+                      <Text style={styles.resultScoreButtonText}>
+                        {gradeResults?.intonation.score}
+                      </Text>
                     </Pressable>
-                    <Pressable onPress={() => showModalHandler(gradeResults.intonation)}>
+                    <Pressable
+                      onPress={() => showModalHandler(gradeResults.intonation)}
+                    >
                       <Text style={styles.resultScoreText}>Intonation</Text>
                     </Pressable>
                   </View>
@@ -568,7 +612,11 @@ function VocabularyLessons() {
         )}
       </SafeAreaView>
       {showModal && gradingData && (
-        <ScoreModal modelData={gradingData} isVisible={showModal} setIsVisible={setShowModal} />
+        <ScoreModal
+          modelData={gradingData}
+          isVisible={showModal}
+          setIsVisible={setShowModal}
+        />
       )}
     </>
   );
@@ -848,10 +896,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f04648",
     borderBottomWidth: 3,
     borderRightWidth: 1,
-    borderColor: "#bf383a",
   },
   resultText: {
     fontWeight: "600",
@@ -877,12 +923,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 999,
-    backgroundColor: Styles.backgroundTertiary,
-    shadowColor: "#e4a92d",
-    shadowOffset: { height: 3, width: 1 },
-    shadowRadius: 3,
-    boxShadow: "1px 3px 1px #e4a92d",
-    elevation: 5,
+    borderBottomWidth: 3,
+    borderRightWidth: 1,
   },
   resultScoreButtonText: {
     color: "#141414",
