@@ -193,18 +193,23 @@ function VocabularyLessons() {
     player.remove();
   };
 
+  const audioHandlerTimer = () => {
+  };
+  
   const submitAudioHandler = () => {
     setSubmitAudio(true);
-    setShowResults(true);
-    setLoadingResults(true);
+    setTimeout(() => {
+      setShowResults(true);
+      setLoadingResults(true);
+    }, 3000);
   };
 
-  if(!questions) {
+  if (!questions) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>404 Questions not found....</Text>
-</SafeAreaView>
-    )
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
   }
   return (
     <>
@@ -234,7 +239,12 @@ function VocabularyLessons() {
           </View>
           {/* PROGRESS */}
           <View style={styles.progressContainer}>
-            <View style={[styles.progressBar, {width: `${(questions.id / questions.total) * 100}%`}]}></View>
+            <View
+              style={[
+                styles.progressBar,
+                { width: `${(questions.id / questions.total) * 100}%` },
+              ]}
+            ></View>
           </View>
           {/* LESSON CARD FRONT SIDE */}
           {/* <View style={{paddingHorizontal: 16}}> */}
@@ -263,10 +273,13 @@ function VocabularyLessons() {
                       Repeat what you hear.
                     </Text>
                     <Text style={styles.lessonText}>
-                      <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0{questions.total}
+                      <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>
+                      /0{questions.total}
                     </Text>
                   </View>
-                  <Text style={styles.vocalbularyText}>{questions.currentQuestion.term}</Text>
+                  <Text style={styles.vocalbularyText}>
+                    {questions.currentQuestion.term}
+                  </Text>
                   <Text style={styles.instructionText}>
                     Tab card to see defination.
                   </Text>
@@ -300,13 +313,18 @@ function VocabularyLessons() {
                 <View style={styles.instructionContainer}>
                   <Text style={styles.instructionsText}>Defination</Text>
                   <Text style={styles.lessonText}>
-                    <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0{questions.total}
+                    <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0
+                    {questions.total}
                   </Text>
                 </View>
-                <Text style={styles.vocabularyTextBack}>{questions.currentQuestion.term}</Text>
+                <Text style={styles.vocabularyTextBack}>
+                  {questions.currentQuestion.term}
+                </Text>
                 <View style={styles.translationContainer}>
                   <Text style={styles.translationHeading}>Translation:</Text>
-                  <Text style={styles.translationText}>{questions.currentQuestion.translation}</Text>
+                  <Text style={styles.translationText}>
+                    {questions.currentQuestion.translation}
+                  </Text>
                 </View>
                 <View>
                   <Text style={styles.exampleHeading}>Example:</Text>
@@ -324,7 +342,9 @@ function VocabularyLessons() {
 
           {submitAudio && (
             <View style={styles.resultAudioContainer}>
-              <Text style={styles.resultAudioText}>Poor</Text>
+              <Text style={styles.resultAudioText}>
+                {loadingResults ? "Poor" : "Grading..."}
+              </Text>
               <View style={[styles.recordPlayerContainer, { borderRadius: 4 }]}>
                 <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
                   • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
@@ -332,29 +352,33 @@ function VocabularyLessons() {
                 {/* RECORD BUTTON */}
 
                 {/* PLAYBACK BUTTON */}
-                {!playButton && !recorderState.isRecording && submit && (
-                  <Pressable
-                    onPress={() => playRecording()}
-                    style={[
-                      styles.playbackButton,
-                      { backgroundColor: Styles.backgroundTertiary },
-                    ]}
-                  >
-                    <Feather name="play" size={16} color="white" />
-                  </Pressable>
-                )}
+                {loadingResults && (
+                  <>
+                    {!playButton && !recorderState.isRecording && submit && (
+                      <Pressable
+                        onPress={() => playRecording()}
+                        style={[
+                          styles.playbackButton,
+                          { backgroundColor: Styles.backgroundTertiary },
+                        ]}
+                      >
+                        <Feather name="play" size={16} color="white" />
+                      </Pressable>
+                    )}
 
-                {/* PAUSE BUTTON */}
-                {playButton && !recorderState.isRecording && (
-                  <Pressable
-                    onPress={() => pauseRecoding()}
-                    style={[
-                      styles.playbackButton,
-                      { backgroundColor: Styles.backgroundTertiary },
-                    ]}
-                  >
-                    <FontAwesome6 name="pause" size={16} color="white" />
-                  </Pressable>
+                    {/* PAUSE BUTTON */}
+                    {playButton && !recorderState.isRecording && (
+                      <Pressable
+                        onPress={() => pauseRecoding()}
+                        style={[
+                          styles.playbackButton,
+                          { backgroundColor: Styles.backgroundTertiary },
+                        ]}
+                      >
+                        <FontAwesome6 name="pause" size={16} color="white" />
+                      </Pressable>
+                    )}
+                  </>
                 )}
               </View>
             </View>
@@ -551,7 +575,6 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
-    // width: "18.75%",
     backgroundColor: Styles.backgroundTertiary,
     borderTopLeftRadius: 48,
     borderBottomLeftRadius: 48,
