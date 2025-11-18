@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 // import  from "react-native-reanimated";
 import { useEffect, useRef } from "react";
+import scoreStyles from "../utils/scoreStyles";
 const screenDimensions = Dimensions.get("screen").height;
 
   type GradesData = {
@@ -64,7 +65,7 @@ export default function ScoreModal({
         <View>
           <View style={styles.scoreContainer}>
             <Text style={styles.scoreTitle}>{modelData.title}</Text>
-            <View style={styles.scoreCard}>
+            <View style={[styles.scoreCard, scoreStyles(modelData.grade)]}>
               <Text style={styles.scoreText}>{modelData.score}</Text>
             </View>
           </View>
@@ -124,10 +125,10 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Styles.backgroundTertiary,
+    // backgroundColor: Styles.backgroundTertiary,
     borderBottomWidth: 3,
     borderRightWidth: 1,
-    borderColor: "#e4a92d",
+    // borderColor: "#e4a92d",
   },
   scoreText: {
     fontWeight: "bold",

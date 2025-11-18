@@ -7,5 +7,5 @@ export async function GET(request: Request) {
   const total = accuracy + fluency + intonation;
 
   const result = generateResults(accuracy, fluency, intonation);
-  return Response.json({ total, ...result }, { status: 200 });
+  return Response.json({ total, result }, { status: 200 });
 }

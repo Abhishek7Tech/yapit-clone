@@ -7,6 +7,7 @@ import {
   Animated,
   Easing,
   Alert,
+  ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -52,6 +53,7 @@ function VocabularyLessons() {
   const [showModal, setShowModal] = useState(false);
   // Data for Models
   const [gradingData, setGradingData] = useState<GradesData | null>(null);
+  // Score Button Styles
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const player = useAudioPlayer(null);
@@ -87,7 +89,20 @@ function VocabularyLessons() {
     fluency: GradesData;
     intonation: GradesData;
   };
-
+  useEffect(() => {
+    console.log("Grades", gradeResults?.accuracy);
+    // if (gradeResults) {
+    //   const accuracyScoreStyles = scoreStyles(gradeResults?.accuracy.grade);
+    //   const fluencyScoreStyles = scoreStyles(gradeResults?.fluency.grade);
+    //   const intonationScoreStyles = scoreStyles(gradeResults?.intonation.grade);
+    //   console.log("Styles", accuracyScoreStyles)
+    //   setScoreCardStyles({
+    //     accuracyScoreStyles,
+    //     fluencyScoreStyles,
+    //     intonationScoreStyles,
+    //   });
+    // }
+  }, [gradeResults]);
   useEffect(() => {
     (async () => {
       const response = await fetch(`/api/question/${params.params}`);
@@ -218,16 +233,16 @@ function VocabularyLessons() {
 
   const audioHandlerTimer = () => {};
 
-  const submitAudioHandler = () => {
+  const submitAudioHandler = async () => {
     setSubmitAudio(true);
     setTimeout(async () => {
-      const response = await fetch("/api/grading");
-      const data = await response.json();
-      console.log("Data", data);
-      setGradeResults(data.result);
       setShowResults(true);
       setLoadingResults(true);
     }, 3000);
+    const response = await fetch("/api/grading");
+    const data = await response.json();
+    console.log("Data-grading", data);
+    setGradeResults(data.result);
   };
 
   if (!questions) {
@@ -238,7 +253,6 @@ function VocabularyLessons() {
     );
   }
 
-  console.log("Styles", scoreStyles("low"));
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -370,9 +384,16 @@ function VocabularyLessons() {
 
           {submitAudio && (
             <View style={styles.resultAudioContainer}>
-              <Text style={styles.resultAudioText}>
-                {loadingResults ? "Poor" : "Grading..."}
-              </Text>
+              {!showResults && (
+                <Text style={styles.resultAudioText}>Grading...</Text>
+              )}
+
+              { showResults && (
+                <Text style={styles.resultAudioText}>
+                  {gradingData && gradingData.score > 240 ? "Good" : "Poor"}
+                </Text>
+              )}
+
               <View style={[styles.recordPlayerContainer, { borderRadius: 4 }]}>
                 <Animated.Text style={[styles.recordPlayerText, { opacity }]}>
                   • • • ▮▮▮ •• ▮ ▮ • • • ▮▮ • •
@@ -440,19 +461,19 @@ function VocabularyLessons() {
                     <View
                       style={[
                         styles.resultIcon,
-                        { backgroundColor: "#f04648", borderColor: "#bf383a" },
+                        { backgroundColor: "#4eed71", borderColor: "#41ca55" },
                       ]}
                     >
-                      <Entypo name="cross" size={24} color="white" />
+                      <Entypo name="check" size={24} color="white" />
                     </View>
                   ) : (
                     <View
                       style={[
                         styles.resultIcon,
-                        { backgroundColor: "#4eed71", borderColor: "#41ca55" },
+                        { backgroundColor: "#f04648", borderColor: "#bf383a" },
                       ]}
                     >
-                      <Entypo name="check" size={24} color="white" />
+                      <Entypo name="cross" size={24} color="white" />
                     </View>
                   )}
 
@@ -467,7 +488,7 @@ function VocabularyLessons() {
                       onPress={() => showModalHandler(gradeResults.accuracy)}
                       style={[
                         styles.resultScoreButton,
-                        scoreStyles(gradeResults.accuracy.grade),
+                        scoreStyles(gradeResults?.accuracy.grade),
                       ]}
                     >
                       <Text style={styles.resultScoreButtonText}>
@@ -486,7 +507,8 @@ function VocabularyLessons() {
                       onPress={() => showModalHandler(gradeResults.fluency)}
                       style={[
                         styles.resultScoreButton,
-                        scoreStyles(gradeResults.fluency.grade),
+                        scoreStyles(gradeResults?.fluency.grade),
+                        ,
                       ]}
                     >
                       <Text style={styles.resultScoreButtonText}>
@@ -501,17 +523,22 @@ function VocabularyLessons() {
                   </View>
 
                   <View style={styles.resultScore}>
-                    <Pressable
-                      onPress={() => showModalHandler(gradeResults.intonation)}
-                      style={[
-                        styles.resultScoreButton,
-                        scoreStyles(gradeResults.intonation.grade),
-                      ]}
-                    >
-                      <Text style={styles.resultScoreButtonText}>
-                        {gradeResults?.intonation.score}
-                      </Text>
-                    </Pressable>
+                    {
+                      <Pressable
+                        onPress={() =>
+                          showModalHandler(gradeResults.intonation)
+                        }
+                        style={[
+                          styles.resultScoreButton,
+                          scoreStyles(gradeResults?.intonation.grade),
+                          ,
+                        ]}
+                      >
+                        <Text style={styles.resultScoreButtonText}>
+                          {gradeResults?.intonation.score}
+                        </Text>
+                      </Pressable>
+                    }
                     <Pressable
                       onPress={() => showModalHandler(gradeResults.intonation)}
                     >
@@ -568,6 +595,7 @@ function VocabularyLessons() {
               <Pressable
                 onPress={() => retryHandler()}
                 style={styles.retryButton}
+                disabled={!loadingResults}
               >
                 <Text style={styles.retryButtonText}>Retry</Text>
               </Pressable>
@@ -889,6 +917,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginLeft: 20,
     marginBottom: 16,
+    flexDirection: "row",
   },
   resultIcon: {
     width: 32,
