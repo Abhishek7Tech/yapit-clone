@@ -15,17 +15,35 @@ import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
 import Notifications from "../components/notification";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useNotificationStore from "../store/thanksNotification";
 const coinUrl = require("@/assets/images/coin.webp");
 const flamesUrl = require("@/assets/images/flame.png");
+
+type LessonsList = {
+  group: number;
+  lesson: number;
+  disabled: boolean;
+}[];
+
 export default function HomeTab() {
   const today = new Date().getDay();
   const [notifications, setNotifications] = useState(false);
+  const [lessonList, getLessonList] = useState<LessonsList | null>(null);
   const quizHandler = () => {
     setNotifications(true);
   };
   const store = useNotificationStore();
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/lessons");
+      const data = await response.json();
+      if(data) {
+        getLessonList(data.lessonsList);
+      }
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -127,7 +145,7 @@ export default function HomeTab() {
 
           <View style={styles.lessonsListContainer}>
             <FlatList
-              data={LessonsList}
+              data={lessonList}
               horizontal={true}
               contentContainerStyle={{
                 overflowX: "auto",
@@ -150,7 +168,7 @@ export default function HomeTab() {
                   ]}
                 >
                   <Pressable
-                    onPress={() => router.navigate("/lesson")}
+                    onPress={() => router.navigate(`/lesson/${item.lesson}`)}
                     disabled={item.disabled}
                   >
                     <View style={{ paddingBottom: 12 }}>

@@ -41,6 +41,12 @@ export default function RootLayout() {
         name="report"
         options={{ headerShown: false }}
       ></Stack.Screen>
+       <Stack.Screen
+        name="quiz"
+        options={{
+          headerShown: false,
+        }}
+      ></Stack.Screen>
     </Stack>
   );
 }

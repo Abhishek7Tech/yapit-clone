@@ -2,9 +2,12 @@ import { Pressable, StyleSheet, Text, View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import Styles from "../utils/styles";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 const YappyImg = require("@/assets/images/yappy.webp");
 export default function Lesson() {
+  const params = useLocalSearchParams();
+  console.log("Params", params.index);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.lessonContainer}>
@@ -13,10 +16,13 @@ export default function Lesson() {
           source={YappyImg}
           accessibilityLabel="Yappy icon"
         ></Image>
-        <Text style={styles.lessonText}>Lesson 1</Text>
+        <Text style={styles.lessonText}>Lesson {params.index}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button} onPress={() => router.navigate("/lesson/3?seq=1")}>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.navigate(`/quiz/${params.index}`)}
+        >
           <Text style={styles.buttonText}>Continue</Text>
         </Pressable>
       </View>
@@ -37,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
-    paddingBottom: 70
+    paddingBottom: 70,
   },
   lessonText: {
     marginTop: 16,
@@ -54,7 +60,6 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "absolute",
     bottom: StatusBar.currentHeight,
-
   },
   button: {
     width: "100%",

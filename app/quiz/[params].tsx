@@ -53,10 +53,35 @@ function VocabularyLessons() {
   const player = useAudioPlayer(null);
   const playerStatus = useAudioPlayerStatus(player);
   const recorderState = useAudioRecorderState(audioRecorder);
-
+  const [questions, setQuestions] = useState<Questions | null>(null);
   const params = useLocalSearchParams();
-  const speechHandler = () => {
-    speak("Kan cha");
+  console.log("PArams", params.params);
+
+  type Questions = {
+    id: number;
+    total: number;
+    currentQuestion: {
+      index: number;
+      term: string;
+      translation: string;
+      example: string;
+      answered: boolean;
+    };
+  };
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`/api/question/${params.params}`);
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log("Data", data);
+        setQuestions(data.question[0]);
+      }
+    })();
+  }, [params.params]);
+
+  const speechHandler = (term: string) => {
+    speak(term);
   };
 
   const flipBack = flip.interpolate({
@@ -174,6 +199,13 @@ function VocabularyLessons() {
     setLoadingResults(true);
   };
 
+  if(!questions) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>404 Questions not found....</Text>
+</SafeAreaView>
+    )
+  }
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -202,7 +234,7 @@ function VocabularyLessons() {
           </View>
           {/* PROGRESS */}
           <View style={styles.progressContainer}>
-            <View style={styles.progressBar}></View>
+            <View style={[styles.progressBar, {width: `${(questions.id / questions.total) * 100}%`}]}></View>
           </View>
           {/* LESSON CARD FRONT SIDE */}
           {/* <View style={{paddingHorizontal: 16}}> */}
@@ -231,10 +263,10 @@ function VocabularyLessons() {
                       Repeat what you hear.
                     </Text>
                     <Text style={styles.lessonText}>
-                      <Text style={{ fontWeight: "bold" }}>3</Text>/08
+                      <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0{questions.total}
                     </Text>
                   </View>
-                  <Text style={styles.vocalbularyText}>buenaus tardes</Text>
+                  <Text style={styles.vocalbularyText}>{questions.currentQuestion.term}</Text>
                   <Text style={styles.instructionText}>
                     Tab card to see defination.
                   </Text>
@@ -243,7 +275,7 @@ function VocabularyLessons() {
                   disabled={flipped}
                   style={styles.speakButton}
                   onPress={() => {
-                    speechHandler();
+                    speechHandler(questions.currentQuestion.term);
                   }}
                 >
                   <Foundation name="sound" size={24} color="white" />
@@ -268,18 +300,18 @@ function VocabularyLessons() {
                 <View style={styles.instructionContainer}>
                   <Text style={styles.instructionsText}>Defination</Text>
                   <Text style={styles.lessonText}>
-                    <Text style={{ fontWeight: "bold" }}>3</Text>/08
+                    <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0{questions.total}
                   </Text>
                 </View>
-                <Text style={styles.vocabularyTextBack}>buenaus tardes</Text>
+                <Text style={styles.vocabularyTextBack}>{questions.currentQuestion.term}</Text>
                 <View style={styles.translationContainer}>
                   <Text style={styles.translationHeading}>Translation:</Text>
-                  <Text style={styles.translationText}>good afternoon</Text>
+                  <Text style={styles.translationText}>{questions.currentQuestion.translation}</Text>
                 </View>
                 <View>
                   <Text style={styles.exampleHeading}>Example:</Text>
                   <Text style={styles.exampleText}>
-                    "Buenas tardes, profesora."
+                    "{questions.currentQuestion.example}"
                   </Text>
                 </View>
                 <Text style={[styles.instructionText, { marginTop: 12 }]}>
@@ -372,7 +404,10 @@ function VocabularyLessons() {
                   </View>
 
                   <View style={styles.resultScore}>
-                    <Pressable onPress={() => setShowModal(true)} style={styles.resultScoreButton}>
+                    <Pressable
+                      onPress={() => setShowModal(true)}
+                      style={styles.resultScoreButton}
+                    >
                       <Text style={styles.resultScoreButtonText}>63</Text>
                     </Pressable>
                     <Pressable onPress={() => setShowModal(true)}>
@@ -381,7 +416,10 @@ function VocabularyLessons() {
                   </View>
 
                   <View style={styles.resultScore}>
-                    <Pressable onPress={() => setShowModal(true)} style={styles.resultScoreButton}>
+                    <Pressable
+                      onPress={() => setShowModal(true)}
+                      style={styles.resultScoreButton}
+                    >
                       <Text style={styles.resultScoreButtonText}>62</Text>
                     </Pressable>
                     <Pressable onPress={() => setShowModal(true)}>
@@ -481,7 +519,9 @@ function VocabularyLessons() {
           </View>
         )}
       </SafeAreaView>
-      {showModal && <ScoreModal isVisible={showModal} setIsVisible={setShowModal}/>}
+      {showModal && (
+        <ScoreModal isVisible={showModal} setIsVisible={setShowModal} />
+      )}
     </>
   );
 }
@@ -511,7 +551,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
-    width: "18.75%",
+    // width: "18.75%",
     backgroundColor: Styles.backgroundTertiary,
     borderTopLeftRadius: 48,
     borderBottomLeftRadius: 48,

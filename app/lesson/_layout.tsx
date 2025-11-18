@@ -7,7 +7,7 @@ export default function LessonsLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="index"
+        name="[index]"
         // options={{ headerShown: false }}
         options={{
           headerTitle: " ",
