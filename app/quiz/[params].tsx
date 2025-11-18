@@ -46,8 +46,11 @@ function VocabularyLessons() {
 
   const [showResults, setShowResults] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
+  const [gradeResults, setGradeResults] = useState<Grades | null>(null);
 
   const [showModal, setShowModal] = useState(false);
+  // Data for Models
+  const [gradingData, setGradingData] = useState<GradesData | null>(null);
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const player = useAudioPlayer(null);
@@ -67,6 +70,20 @@ function VocabularyLessons() {
       example: string;
       answered: boolean;
     };
+  };
+
+  type GradesData = {
+    title: string,
+     score: number;
+    feedback: string;
+    grade: string;
+    remarks: string[];
+  }
+
+  type Grades = {
+    accuracy: GradesData,
+    fluency: GradesData,
+    intonation: GradesData
   };
 
   useEffect(() => {
@@ -127,6 +144,10 @@ function VocabularyLessons() {
     outputRange: [0.9, 0.4],
   });
 
+  const showModalHandler = (gradesData: GradesData) => {
+    setShowModal(true);
+    setGradingData(gradesData);
+  }
   const askForMicroPhonePermission = async () => {
     try {
       const status = await AudioModule.requestRecordingPermissionsAsync();
@@ -193,12 +214,15 @@ function VocabularyLessons() {
     player.remove();
   };
 
-  const audioHandlerTimer = () => {
-  };
-  
+  const audioHandlerTimer = () => {};
+
   const submitAudioHandler = () => {
     setSubmitAudio(true);
-    setTimeout(() => {
+    setTimeout(async () => {
+      const response = await fetch("/api/grading");
+      const data = await response.json();
+      console.log("Data", data);
+      setGradeResults(data.result);
       setShowResults(true);
       setLoadingResults(true);
     }, 3000);
@@ -405,7 +429,7 @@ function VocabularyLessons() {
               },
             ]}
           >
-            {showResults && (
+            {showResults && gradeResults && (
               <View style={styles.resultContainer}>
                 <View style={styles.result}>
                   <View style={styles.resultIcon}>
@@ -417,36 +441,36 @@ function VocabularyLessons() {
                 <View style={styles.resultScoreContainer}>
                   <View style={styles.resultScore}>
                     <Pressable
-                      onPress={() => setShowModal(true)}
+                      onPress={() => showModalHandler(gradeResults.accuracy)}
                       style={styles.resultScoreButton}
                     >
-                      <Text style={styles.resultScoreButtonText}>64</Text>
+                      <Text style={styles.resultScoreButtonText}>{gradeResults?.accuracy.score}</Text>
                     </Pressable>
-                    <Pressable onPress={() => setShowModal(true)}>
+                    <Pressable onPress={() =>  showModalHandler(gradeResults.accuracy)}>
                       <Text style={styles.resultScoreText}>Accuracy</Text>
                     </Pressable>
                   </View>
 
                   <View style={styles.resultScore}>
                     <Pressable
-                      onPress={() => setShowModal(true)}
+                      onPress={() =>  showModalHandler(gradeResults.fluency)}
                       style={styles.resultScoreButton}
                     >
-                      <Text style={styles.resultScoreButtonText}>63</Text>
+                      <Text style={styles.resultScoreButtonText}>{gradeResults?.fluency.score}</Text>
                     </Pressable>
-                    <Pressable onPress={() => setShowModal(true)}>
+                    <Pressable onPress={() => showModalHandler(gradeResults.fluency)}>
                       <Text style={styles.resultScoreText}>Fluency</Text>
                     </Pressable>
                   </View>
 
                   <View style={styles.resultScore}>
                     <Pressable
-                      onPress={() => setShowModal(true)}
+                      onPress={() => showModalHandler(gradeResults.intonation)}
                       style={styles.resultScoreButton}
                     >
-                      <Text style={styles.resultScoreButtonText}>62</Text>
+                      <Text style={styles.resultScoreButtonText}>{gradeResults?.intonation.score}</Text>
                     </Pressable>
-                    <Pressable onPress={() => setShowModal(true)}>
+                    <Pressable onPress={() => showModalHandler(gradeResults.intonation)}>
                       <Text style={styles.resultScoreText}>Intonation</Text>
                     </Pressable>
                   </View>
@@ -543,8 +567,8 @@ function VocabularyLessons() {
           </View>
         )}
       </SafeAreaView>
-      {showModal && (
-        <ScoreModal isVisible={showModal} setIsVisible={setShowModal} />
+      {showModal && gradingData && (
+        <ScoreModal modelData={gradingData} isVisible={showModal} setIsVisible={setShowModal} />
       )}
     </>
   );

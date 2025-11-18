@@ -15,12 +15,21 @@ import Styles from "../utils/styles";
 import { useEffect, useRef } from "react";
 const screenDimensions = Dimensions.get("screen").height;
 
+  type GradesData = {
+    title: string,
+     score: number;
+    feedback: string;
+    grade: string;
+    remarks: string[];
+  }
 export default function ScoreModal({
   isVisible,
   setIsVisible,
+  modelData,
 }: {
   isVisible: boolean;
   setIsVisible: (isVisible: boolean) => void;
+  modelData: GradesData
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
   useEffect(() => {
@@ -54,19 +63,19 @@ export default function ScoreModal({
       >
         <View>
           <View style={styles.scoreContainer}>
-            <Text style={styles.scoreTitle}>Accuracy</Text>
+            <Text style={styles.scoreTitle}>{modelData.title}</Text>
             <View style={styles.scoreCard}>
-              <Text style={styles.scoreText}>65</Text>
+              <Text style={styles.scoreText}>{modelData.score}</Text>
             </View>
           </View>
           <Text style={styles.suggestionText}>
-            The pronunciation is not very clear, and the sounds are not
-            accurately produced.
+            {modelData.feedback}
+
           </Text>
           <View style={styles.detailsContainer}>
             <Text style={styles.detailsHeading}>Details</Text>
             <FlatList
-            data={DummyDetails}
+            data={modelData.remarks}
             keyExtractor={item => item}
             renderItem={({item}) => <Text style={styles.detailText}>  <Text style={{ fontSize: 16 }}>•</Text> {item}</Text>}
             />
@@ -94,7 +103,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: Styles.backgroundColor,
-    minHeight: screenDimensions * 0.30
+    minHeight: screenDimensions * 0.30,
+    width: "100%"
   },
   scoreContainer: {
     flexDirection: "column",
