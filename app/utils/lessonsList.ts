@@ -3,7 +3,7 @@ const LessonsListArray = [
     group: 1,
     lesson: 1,
     disabled: false,
-    completed: false,
+    completed: true,
   },
   {
     group: 2,

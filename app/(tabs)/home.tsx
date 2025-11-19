@@ -1,4 +1,5 @@
 import { FontAwesome5 } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
@@ -40,7 +41,7 @@ export default function HomeTab() {
     (async () => {
       const response = await fetch("/api/lessons");
       const data = await response.json();
-      if(data) {
+      if (data) {
         getLessonList(data.lessonsList);
       }
     })();
@@ -156,43 +157,75 @@ export default function HomeTab() {
                 paddingBottom: 10,
               }}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View
-                  style={[
-                    styles.lessonsContainer,
-                    {
-                      backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                      boxShadow: `0 3px ${
-                        item.disabled ? "#e2ddd3" : "#d1d5db"
-                      }`,
-                    },
-                  ]}
-                >
-                  <Pressable
-                    onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                    disabled={item.disabled}
+              renderItem={({ item }) =>
+                item.completed ? (
+                  <View
+                    style={[
+                      styles.lessonsContainer,
+                      {
+                        backgroundColor: "#EF4444",
+                        boxShadow: "0 3px #d12a2c",
+                      },
+                    ]}
                   >
-                    <View style={{ paddingBottom: 12 }}>
-                      <Text
-                        style={[
-                          styles.lessonText,
-                          { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                        ]}
-                      >
-                        Lesson {item.lesson}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.groupText,
-                          { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                        ]}
-                      >
-                        Group {item.group}
-                      </Text>
-                    </View>
-                  </Pressable>
-                </View>
-              )}
+                    <Ionicons
+                      style={{ position: "absolute", top: 8, left: 12 }}
+                      name="checkmark-circle-sharp"
+                      size={20}
+                      color={Styles.backgroundTertiary}
+                    />
+                    <Pressable
+                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
+                      disabled={item.disabled}
+                    >
+                      <View style={{ paddingBottom: 12 }}>
+                        <Text style={[styles.lessonText, { color: "white" }]}>
+                          Lesson {item.lesson}
+                        </Text>
+                        <Text style={[styles.groupText, { color: "white" }]}>
+                          Group {item.group}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  </View>
+                ) : (
+                  <View
+                    style={[
+                      styles.lessonsContainer,
+                      {
+                        backgroundColor: item.disabled ? "#e5e7eb" : "white",
+                        boxShadow: `0 3px ${
+                          item.disabled ? "#e2ddd3" : "#d1d5db"
+                        }`,
+                      },
+                    ]}
+                  >
+                    <Pressable
+                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
+                      disabled={item.disabled}
+                    >
+                      <View style={{ paddingBottom: 12 }}>
+                        <Text
+                          style={[
+                            styles.lessonText,
+                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                          ]}
+                        >
+                          Lesson {item.lesson}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.groupText,
+                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                          ]}
+                        >
+                          Group {item.group}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  </View>
+                )
+              }
             />
           </View>
         </View>
