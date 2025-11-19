@@ -1,71 +1,124 @@
-import LessonsList, { setLessonList } from "@/app/utils/lessonsList";
-import Quiz from "../../utils/QuizQuestions";
-let QuizQuestions = Quiz;
+
+import fs from "fs";
+
+type Questions = {
+  id: number;
+  language: string;
+  total: number;
+  questions: {
+    index: number;
+    term: string;
+    translation: string;
+    example: string;
+    answered: boolean;
+  }[];
+};
+
+type LessonsList = {
+  group: number;
+  lesson: number;
+  disabled: boolean;
+  completed: boolean;
+}[];
+
 export async function GET(_request: Request, { id }: Record<string, string>) {
-  const questions = QuizQuestions.filter((que) => que.id === +id);
-  if (!questions.length) {
+  const data = await fs.promises.readFile("app/data/quizQuestions.json", "utf8");
+
+  if (!data.length) {
     return Response.json({ message: "Lesson not found." }, { status: 404 });
   }
+    const Quiz: Questions[] = JSON.parse(data);
+    const questions = Quiz.filter((que) => que.id === +id);
+    if (!questions.length) {
+      return Response.json({ message: "Lesson not found." }, { status: 404 });
+    }
 
-  const currentQuestion = questions[0].questions.find(
-    (que) => que.answered === false
-  );
+    const currentQuestion = questions[0].questions.find(
+      (que) => que.answered === false
+    );
 
-  return Response.json(
-    {
-      question: [
-        { currentQuestion, total: questions[0].total, id: questions[0].id },
-      ],
-    },
-    { status: 200 }
-  );
+    return Response.json(
+      {
+        question: [
+          { currentQuestion, total: questions[0].total, id: questions[0].id },
+        ],
+      },
+      { status: 200 }
+    );
 }
 
 export async function POST(request: Request, { id }: Record<string, string>) {
   const body = await request.json();
   const questionIndex = +body.index;
-  const questions = QuizQuestions.filter((que) => que.id === +id);
+  const data = await fs.promises.readFile("app/data/quizQuestions.json", "utf8");
 
-  if (!questions.length) {
-    return Response.json({ message: "Lesson not found." }, { status: 404 });
-  }
+    if (!data.length) {
+      return Response.json({ message: "Lesson not found." }, { status: 404 });
+    }
+    const Quiz: Questions[] = JSON.parse(data);
+    const questions = Quiz.filter((que) => que.id === +id);
 
-  const updatedQuestion = questions[0].questions.map((que) =>
-    que.index === questionIndex ? { ...que, answered: true } : que
-  );
-  QuizQuestions = QuizQuestions.map((questions) =>
-    questions.id === +id
-      ? { ...questions, questions: updatedQuestion }
-      : questions
-  );
-
-  if (questions[0].total === +questionIndex) {
-    const updateLessonList = LessonsList.map((lesson) =>
-      lesson.lesson === +id ? { ...lesson, disabled: false } : lesson
+    if (!questions.length) {
+      return Response.json({ message: "Lesson not found." }, { status: 404 });
+    }
+    const updatedQuestion = questions[0].questions.map((que) =>
+      que.index === questionIndex ? { ...que, answered: true } : que
     );
-    setLessonList(updateLessonList);
-  }
+    const updatedQuiz = Quiz.map((questions) =>
+      questions.id === +id
+        ? { ...questions, questions: updatedQuestion }
+        : questions
+    );
 
-  const nextLesson = QuizQuestions.filter((que) => que.id === +id);
+    await fs.promises.writeFile(
+      "app/data/quizQuestions.json",
+      JSON.stringify(updatedQuiz)
+    );
 
-  if (!nextLesson.length) {
-    return Response.json({ message: "Lesson not found." }, { status: 404 });
-  }
 
-  const nextQuestion = nextLesson[0].questions.find(
-    (que) => que.answered === false
-  );
-  console.log("Next Question:", nextQuestion);
-  return Response.json(
-    {
-      question: [
-        {
-          currentQuestion: nextQuestion,
-          total: nextLesson[0].total,
-          id: nextLesson[0].id,
-        },
-      ],
-    },
-    { status: 200 }
-  );
+    const response = await fs.promises.readFile("app/data/lessonsList.json", "utf8");
+    const lessonList: LessonsList = await JSON.parse(response);
+    if (questions[0].total === +questionIndex) {
+      const updateCurrentLesson = lessonList.map((lesson) =>
+        lesson.lesson === +id
+          ? { ...lesson, disabled: false, completed: true }
+          : lesson
+      );
+
+      const updateLessonList = updateCurrentLesson.map((lesson, idx) =>
+        lesson.lesson === +id + 1 && idx < updateCurrentLesson.length
+          ? { ...lesson, disabled: false }
+          : lesson
+      );
+
+      await fs.promises.writeFile(
+      "app/data/lessonsList.json",
+      JSON.stringify(updateLessonList)
+    );
+
+
+    }
+
+    const nextLesson = updatedQuiz.filter((que) => que.id === +id);
+
+    if (!nextLesson.length) {
+      return Response.json({ message: "Lesson not found." }, { status: 404 });
+    }
+
+    const nextQuestion = nextLesson[0].questions.find(
+      (que) => que.answered === false
+    );
+    console.log("Next Question:", nextQuestion);
+    return Response.json(
+      {
+        question: [
+          {
+            currentQuestion: nextQuestion,
+            total: nextLesson[0].total,
+            id: nextLesson[0].id,
+          },
+        ],
+      },
+      { status: 200 }
+    );
 }

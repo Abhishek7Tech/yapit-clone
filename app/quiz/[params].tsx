@@ -95,20 +95,7 @@ function VocabularyLessons() {
     fluency: GradesData;
     intonation: GradesData;
   };
-  useEffect(() => {
-    console.log("Grades", gradeResults?.accuracy);
-    // if (gradeResults) {
-    //   const accuracyScoreStyles = scoreStyles(gradeResults?.accuracy.grade);
-    //   const fluencyScoreStyles = scoreStyles(gradeResults?.fluency.grade);
-    //   const intonationScoreStyles = scoreStyles(gradeResults?.intonation.grade);
-    //   console.log("Styles", accuracyScoreStyles)
-    //   setScoreCardStyles({
-    //     accuracyScoreStyles,
-    //     fluencyScoreStyles,
-    //     intonationScoreStyles,
-    //   });
-    // }
-  }, [gradeResults]);
+
   useEffect(() => {
     (async () => {
       const response = await fetch(`/api/question/${params.params}`);
@@ -212,7 +199,6 @@ function VocabularyLessons() {
   };
 
   const pauseRecoding = () => {
-    console.log("Paused", audioRecorder.uri);
     setPlayButton(false);
     player.pause();
   };
@@ -245,7 +231,6 @@ function VocabularyLessons() {
     }, 3000);
     const response = await fetch("/api/grading");
     const data = await response.json();
-    console.log("Data-grading", data);
     setGradeResults(data.result);
   };
   const nextButtonHandler = async () => {
@@ -264,6 +249,7 @@ function VocabularyLessons() {
       questions?.total !== questions?.currentQuestion.index
     ) {
       const data = await response.json();
+      console.log("Data", data);
       setQuestions(data.question[0]);
       retryHandler();
     }
@@ -290,21 +276,21 @@ function VocabularyLessons() {
 
   return (
     <BlurView
-          style={styles.blurContainer}
-          tint="extraLight"
-          intensity={submitNotification ? 90 : 0}
-        >
-          {submitNotification && (
-            <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
-              <Notifications
-                notification={notifications}
-                handleNotifications={setNotifications}
-                message={"Evaluating submissions..."}
-                icon="submit"
-              />
-            </View>
-          )}
-      <SafeAreaView style={styles.container}>
+      style={styles.blurContainer}
+      tint="extraLight"
+      intensity={submitNotification ? 90 : 0}
+    >
+      {submitNotification && (
+        <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
+          <Notifications
+            notification={notifications}
+            handleNotifications={setNotifications}
+            message={"Evaluating submissions..."}
+            icon="submit"
+          />
+        </View>
+      )}
+      <SafeAreaView style={[styles.container, submitNotification ? {zIndex: -100} : {}]}>
         {/* Header */}
         <View style={{ paddingHorizontal: 16 }}>
           {notifications && (
@@ -337,6 +323,14 @@ function VocabularyLessons() {
                   width: `${
                     (questions.currentQuestion.index / questions.total) * 100
                   }%`,
+                  borderTopRightRadius:
+                    questions.currentQuestion.index === questions.total
+                      ? 48
+                      : 0,
+                  borderBottomRightRadius:
+                    questions.currentQuestion.index === questions.total
+                      ? 48
+                      : 0,
                 },
               ]}
             ></View>
@@ -791,7 +785,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
     alignSelf: "flex-end",
     elevation: 5,
-    zIndex: 999,
+    zIndex: 900,
 
     // boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
   },
@@ -846,7 +840,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 50,
     width: "100%",
-    zIndex: 999,
+    zIndex: 900,
     paddingBottom: 16,
   },
   recordingContainer: {
@@ -1022,13 +1016,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#2D1C1CE6",
   },
-   blurContainer: {
+  blurContainer: {
     flex: 1,
     overflow: "hidden",
     backgroundColor: "rgba(255,255,255,0.2)",
-    zIndex: 200,
+    zIndex: 999,
     position: "relative",
-
   },
 });
 

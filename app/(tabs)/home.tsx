@@ -12,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LessonsList from "../utils/lessonsList";
 import StreakDays from "../utils/streak";
 import Styles from "../utils/styles";
 import Notifications from "../components/notification";
