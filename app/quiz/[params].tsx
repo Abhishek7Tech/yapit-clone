@@ -231,8 +231,6 @@ function VocabularyLessons() {
     player.remove();
   };
 
-  const audioHandlerTimer = () => {};
-
   const submitAudioHandler = async () => {
     setSubmitAudio(true);
     setTimeout(async () => {
@@ -243,6 +241,23 @@ function VocabularyLessons() {
     const data = await response.json();
     console.log("Data-grading", data);
     setGradeResults(data.result);
+  };
+  const nextButtonHandler = async () => {
+    const response = await fetch(`/api/question/${params.params}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        index: questions?.currentQuestion.index,
+      }),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      setQuestions(data.question[0]);
+     retryHandler();
+    }
   };
 
   if (!questions) {
@@ -284,7 +299,7 @@ function VocabularyLessons() {
             <View
               style={[
                 styles.progressBar,
-                { width: `${(questions.id / questions.total) * 100}%` },
+                { width: `${(questions.currentQuestion.index / questions.total) * 100}%` },
               ]}
             ></View>
           </View>
@@ -315,7 +330,7 @@ function VocabularyLessons() {
                       Repeat what you hear.
                     </Text>
                     <Text style={styles.lessonText}>
-                      <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>
+                      <Text style={{ fontWeight: "bold" }}>{questions.currentQuestion.index}</Text>
                       /0{questions.total}
                     </Text>
                   </View>
@@ -355,7 +370,7 @@ function VocabularyLessons() {
                 <View style={styles.instructionContainer}>
                   <Text style={styles.instructionsText}>Defination</Text>
                   <Text style={styles.lessonText}>
-                    <Text style={{ fontWeight: "bold" }}>{questions.id}</Text>/0
+                    <Text style={{ fontWeight: "bold" }}>{questions.currentQuestion.index}</Text>/0
                     {questions.total}
                   </Text>
                 </View>
@@ -388,7 +403,7 @@ function VocabularyLessons() {
                 <Text style={styles.resultAudioText}>Grading...</Text>
               )}
 
-              { showResults && (
+              {showResults && (
                 <Text style={styles.resultAudioText}>
                   {gradingData && gradingData.score > 240 ? "Good" : "Poor"}
                 </Text>
@@ -620,7 +635,7 @@ function VocabularyLessons() {
 
               {showResults && (
                 <Pressable
-                  onPress={() => {}}
+                  onPress={() => nextButtonHandler()}
                   disabled={!loadingResults}
                   style={[
                     styles.submitButton,
