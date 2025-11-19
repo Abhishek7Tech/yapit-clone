@@ -1,8 +1,8 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Feather from "@expo/vector-icons/Feather";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   Platform,
@@ -12,20 +12,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import StreakDays from "../utils/streak";
-import Styles from "../utils/styles";
-import Notifications from "../components/notification";
-import { useEffect, useState } from "react";
+import Notifications from "../components/notification/notification";
 import useNotificationStore from "../store/thanksNotification";
+import Styles from "../utils/styles";
+import Streak from "../components/streak/streak";
+import { LessonsList } from "../types/types";
+import Lessons from "../components/lessons/lessons";
 const coinUrl = require("@/assets/images/coin.webp");
-const flamesUrl = require("@/assets/images/flame.png");
-
-type LessonsList = {
-  group: number;
-  lesson: number;
-  disabled: boolean;
-  completed: boolean;
-}[];
 
 export default function HomeTab() {
   const today = new Date().getDay();
@@ -47,6 +40,11 @@ export default function HomeTab() {
   }, []);
 
   const balance = lessonList?.findLastIndex((lesson) => lesson.completed) || 0;
+  if(!lessonList) {
+    return <SafeAreaView>
+      <Text>Loading...</Text>
+    </SafeAreaView>
+  }
   return (
     <SafeAreaView style={styles.container}>
       {store.thanksNotification && (
@@ -101,134 +99,10 @@ export default function HomeTab() {
         </View>
 
         {/* StreakView */}
-        <View style={styles.streakView}>
-          <View style={styles.streakContainer}>
-            <View style={styles.streakHeading}>
-              <Image
-                style={styles.flamesImg}
-                source={flamesUrl}
-                accessibilityLabel="Flame icon"
-              />
-              <Text style={styles.streakHeadingText}>Daily Streak</Text>
-            </View>
-            <View style={styles.streakDaysContainer}>
-              <FlatList
-                data={StreakDays}
-                horizontal={true}
-                contentContainerStyle={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-                renderItem={({ item }) => (
-                  <View style={styles.streakChecksContainer}>
-                    <View style={styles.streakChecks}>
-                      {item.value === today && (
-                        <Feather name="check" size={24} color={"white"} />
-                      )}
-                    </View>
-                    <Text style={styles.streakDaysText}>{item.day[0]}</Text>
-                  </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-          </View>
-        </View>
+       <Streak/>
 
         {/* //Lessons */}
-        <View>
-          <View style={styles.lessonsHeadingContainer}>
-            <Text style={styles.lessonsHeading}>Lessons</Text>
-            <Link style={styles.allLessons} href={"/lessons/allLessons"}>
-              See all
-            </Link>
-          </View>
-
-          <View style={styles.lessonsListContainer}>
-            <FlatList
-              data={lessonList}
-              horizontal={true}
-              contentContainerStyle={{
-                overflowX: "auto",
-                paddingHorizontal: 16,
-                gap: 16,
-                marginInline: -16,
-                paddingBottom: 10,
-              }}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) =>
-                item.completed ? (
-                  <View
-                    style={[
-                      styles.lessonsContainer,
-                      {
-                        backgroundColor: "#EF4444",
-                        boxShadow: "0 3px #d12a2c",
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      style={{ position: "absolute", top: 8, left: 12 }}
-                      name="checkmark-circle-sharp"
-                      size={20}
-                      color={Styles.backgroundTertiary}
-                    />
-                    <Pressable
-                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                      disabled={item.completed}
-                    >
-                      <View style={{ paddingBottom: 12 }}>
-                        <Text style={[styles.lessonText, { color: "white" }]}>
-                          Lesson {item.lesson}
-                        </Text>
-                        <Text style={[styles.groupText, { color: "white" }]}>
-                          Group {item.group}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  </View>
-                ) : (
-                  <View
-                    style={[
-                      styles.lessonsContainer,
-                      {
-                        backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                        boxShadow: `0 3px ${
-                          item.disabled ? "#e2ddd3" : "#d1d5db"
-                        }`,
-                      },
-                    ]}
-                  >
-                    <Pressable
-                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                      disabled={item.disabled}
-                    >
-                      <View style={{ paddingBottom: 12 }}>
-                        <Text
-                          style={[
-                            styles.lessonText,
-                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                          ]}
-                        >
-                          Lesson {item.lesson}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.groupText,
-                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                          ]}
-                        >
-                          Group {item.group}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  </View>
-                )
-              }
-            />
-          </View>
-        </View>
+        <Lessons lessonList={lessonList}/>
 
         {/* // Talk to Teacher  */}
         <View style={styles.talkToTeacherContainer}>
@@ -318,97 +192,6 @@ const styles = StyleSheet.create({
   currencyImg: {
     width: 64,
     height: 64,
-  },
-  streakView: {
-    marginTop: 16,
-    flexDirection: "column",
-  },
-  streakContainer: {
-    backgroundColor: Styles.backgroundSecondary,
-    borderRadius: 24,
-    padding: 16,
-    flexDirection: "column",
-    borderBottomWidth: 3,
-    borderColor: "#100909",
-  },
-  streakHeading: {
-    flexDirection: "row",
-    gap: 4,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  flamesImg: {
-    height: 20,
-    width: 20,
-  },
-  streakHeadingText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 18,
-  },
-  streakDaysContainer: {
-    flexDirection: "row",
-    marginHorizontal: 8,
-  },
-  streakDaysText: {
-    fontSize: 12,
-    color: "white",
-    marginTop: 4,
-  },
-  streakChecksContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  streakChecks: {
-    width: 40,
-    height: 40,
-    borderRadius: "100%",
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: "#382324",
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-  },
-  lessonsHeadingContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  lessonsHeading: {
-    color: Styles.textSecondary,
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  allLessons: {
-    color: Styles.textSecondary,
-    fontSize: 14,
-    fontWeight: "200",
-  },
-  lessonsListContainer: {
-    paddingVertical: 8,
-  },
-  lessonsContainer: {
-    borderRadius: 16,
-    position: "relative",
-    overflow: "hidden",
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    width: 160,
-    height: 128,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    paddingTop: 16,
-  },
-  lessonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 16,
-  },
-  groupText: {
-    fontSize: 14,
-    flexWrap: "wrap",
   },
   talkToTeacherContainer: {
     marginTop: 4,

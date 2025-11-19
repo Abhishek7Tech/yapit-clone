@@ -1,20 +1,19 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  TextInput,
-  StatusBar,
-} from "react-native";
-import Styles from "../utils/styles";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import Notifications from "../components/notification";
+import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import useLessonsStore from "../store/allLessonsStore";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Notifications from "../components/notification/notification";
 import useNotificationStore from "../store/thanksNotification";
+import Styles from "../utils/styles";
 
 export default function ReportAnIssue() {
   const [reason, setReason] = useState("");

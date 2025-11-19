@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, Pressable, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Styles from "../utils/styles";
-import  Groups from "../components/groups";
-import AllLessons from "../utils/AllLessons";
-import useLessonsStore from "../store/allLessonsStore";
-import  Notifications  from "../components/notification";
 import { useState } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Groups from "../components/group/groups";
+import Notifications from "../components/notification/notification";
+import useLessonsStore from "../store/allLessonsStore";
+import Styles from "../utils/styles";
+import { LessonsList } from "../types/types";
 
-export default function AllLesson() {
+export default function AllLesson(lessonList: LessonsList) {
   const allLessons = useLessonsStore((state) => state.allLessons);
   const [notifications, setNotifications] = useState(false);
 

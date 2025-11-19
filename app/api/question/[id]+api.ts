@@ -19,6 +19,7 @@ type LessonsList = {
   lesson: number;
   disabled: boolean;
   completed: boolean;
+  language: string;
 }[];
 
 export async function GET(_request: Request, { id }: Record<string, string>) {

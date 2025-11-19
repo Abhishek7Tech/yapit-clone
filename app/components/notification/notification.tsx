@@ -1,17 +1,14 @@
 import { Feather, FontAwesome, Fontisto, Ionicons } from "@expo/vector-icons";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  StatusBar,
   Animated,
+  Pressable,
+  StyleSheet,
+  Text
 } from "react-native";
 
-import Styles from "../utils/styles";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { Icon } from "@expo/vector-icons/build/createIconSet";
-import useNotificationStore from "../store/thanksNotification";
+import useNotificationStore from "../../store/thanksNotification";
+import Styles from "../../utils/styles";
 
 export default function Notifications({
   handleNotifications,

@@ -1,24 +1,9 @@
-import { router, useLocalSearchParams } from "expo-router";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Animated,
-  Easing,
-  Alert,
-  ViewStyle,
-  StatusBar,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from "@expo/vector-icons/Entypo";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Foundation from "@expo/vector-icons/Foundation";
+import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Feather from "@expo/vector-icons/Feather";
-import Styles from "../utils/styles";
-import { speak } from "expo-speech";
+import Foundation from "@expo/vector-icons/Foundation";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   AudioModule,
   RecordingPresets,
@@ -28,13 +13,26 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from "expo-audio";
+import { router, useLocalSearchParams } from "expo-router";
+import { speak } from "expo-speech";
+import {
+  Animated,
+  Easing,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Styles from "../utils/styles";
 
-import { useEffect, useRef, useState } from "react";
-import Notifications from "../components/notification";
-import ScoreModal from "../components/scoreModal";
-import scoreStyles from "../utils/scoreStyles";
 import { BlurView } from "expo-blur";
+import { useEffect, useRef, useState } from "react";
+import ScoreModal from "../components/modals/scoreModal";
+import Notifications from "../components/notification/notification";
 import useNotificationStore from "../store/thanksNotification";
+import scoreStyles from "../utils/scoreStyles";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
   const recordAnim = useRef(new Animated.Value(1)).current;

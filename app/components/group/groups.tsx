@@ -1,12 +1,11 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import GroupBg from "../utils/groupsBg";
-import Lessons from "../utils/lessonsList";
-import Styles from "../utils/styles";
-import AllLessons from "../utils/AllLessons";
-import useLessonsStore from "../store/allLessonsStore";
 import { Dispatch, SetStateAction } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import useLessonsStore from "../../store/allLessonsStore";
+import GroupBg from "../../utils/groupsBg";
+import Lessons from "../../utils/LessonsList";
+import Styles from "../../utils/styles";
 
 const Dappy = require("@/assets/images/dappy.svg");
 

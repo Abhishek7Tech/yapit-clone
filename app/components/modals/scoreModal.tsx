@@ -1,19 +1,17 @@
 import {
-  Modal,
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  Dimensions,
   Animated,
-  Pressable,
+  Dimensions,
   FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Styles from "../utils/styles";
+import Styles from "../../utils/styles";
 // import  from "react-native-reanimated";
 import { useEffect, useRef } from "react";
-import scoreStyles from "../utils/scoreStyles";
+import scoreStyles from "../../utils/scoreStyles";
 const screenDimensions = Dimensions.get("screen").height;
 
   type GradesData = {
