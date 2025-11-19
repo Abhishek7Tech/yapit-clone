@@ -1,4 +1,4 @@
-import LessonsList from "@/app/utils/lessonsList";
+import LessonsList, { setLessonList } from "@/app/utils/lessonsList";
 import Quiz from "../../utils/QuizQuestions";
 let QuizQuestions = Quiz;
 export async function GET(_request: Request, { id }: Record<string, string>) {
@@ -40,32 +40,10 @@ export async function POST(request: Request, { id }: Record<string, string>) {
   );
 
   if (questions[0].total === +questionIndex) {
-    const updateLessons = QuizQuestions.filter((que) => que.id === +id + 1);
-
-    if (!updateLessons.length) {
-      return Response.json({ message: "Lesson not found." }, { status: 404 });
-    }
-
-    const currentQuestion = updateLessons[0].questions.find(
-      (que) => que.answered === false
-    );
-
-    LessonsList.map((lesson) =>
+    const updateLessonList = LessonsList.map((lesson) =>
       lesson.lesson === +id ? { ...lesson, disabled: false } : lesson
     );
-
-    return Response.json(
-      {
-        question: [
-          {
-            currentQuestion,
-            total: updateLessons[0].total,
-            id: updateLessons[0].id,
-          },
-        ],
-      },
-      { status: 200 }
-    );
+    setLessonList(updateLessonList);
   }
 
   const nextLesson = QuizQuestions.filter((que) => que.id === +id);

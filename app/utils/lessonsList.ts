@@ -33,4 +33,16 @@ const LessonsListArray = [
 
 let LessonsList = LessonsListArray;
 
+export function setLessonList(
+  lesson: {
+    group: number;
+    lesson: number;
+    disabled: boolean;
+    completed: boolean;
+  }[]
+) {
+  LessonsList = lesson;
+  console.log("Updated Lessons List:", LessonsList);
+}
+
 export default LessonsList;

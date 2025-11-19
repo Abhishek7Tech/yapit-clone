@@ -8,6 +8,7 @@ import {
   Easing,
   Alert,
   ViewStyle,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -32,6 +33,8 @@ import { useEffect, useRef, useState } from "react";
 import Notifications from "../components/notification";
 import ScoreModal from "../components/scoreModal";
 import scoreStyles from "../utils/scoreStyles";
+import { BlurView } from "expo-blur";
+import useNotificationStore from "../store/thanksNotification";
 function VocabularyLessons() {
   const flip = useRef(new Animated.Value(0)).current;
   const recordAnim = useRef(new Animated.Value(1)).current;
@@ -60,6 +63,9 @@ function VocabularyLessons() {
   const playerStatus = useAudioPlayerStatus(player);
   const recorderState = useAudioRecorderState(audioRecorder);
   const [questions, setQuestions] = useState<Questions | null>(null);
+  const [submitNotification, setSubmitNotification] = useState(false);
+  const store = useNotificationStore();
+
   const params = useLocalSearchParams();
   console.log("PArams", params.params);
 
@@ -253,10 +259,24 @@ function VocabularyLessons() {
       }),
     });
 
-    if (response.status === 200) {
+    if (
+      response.status === 200 &&
+      questions?.total !== questions?.currentQuestion.index
+    ) {
       const data = await response.json();
       setQuestions(data.question[0]);
-     retryHandler();
+      retryHandler();
+    }
+
+    if (
+      response.status === 200 &&
+      questions?.total === questions?.currentQuestion.index
+    ) {
+      setSubmitNotification(true);
+      setTimeout(() => {
+        store.toggleThanksNotification(true);
+        router.navigate("/home");
+      }, 3000);
     }
   };
 
@@ -269,7 +289,21 @@ function VocabularyLessons() {
   }
 
   return (
-    <>
+    <BlurView
+          style={styles.blurContainer}
+          tint="extraLight"
+          intensity={submitNotification ? 90 : 0}
+        >
+          {submitNotification && (
+            <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
+              <Notifications
+                notification={notifications}
+                handleNotifications={setNotifications}
+                message={"Evaluating submissions..."}
+                icon="submit"
+              />
+            </View>
+          )}
       <SafeAreaView style={styles.container}>
         {/* Header */}
         <View style={{ paddingHorizontal: 16 }}>
@@ -299,7 +333,11 @@ function VocabularyLessons() {
             <View
               style={[
                 styles.progressBar,
-                { width: `${(questions.currentQuestion.index / questions.total) * 100}%` },
+                {
+                  width: `${
+                    (questions.currentQuestion.index / questions.total) * 100
+                  }%`,
+                },
               ]}
             ></View>
           </View>
@@ -330,7 +368,9 @@ function VocabularyLessons() {
                       Repeat what you hear.
                     </Text>
                     <Text style={styles.lessonText}>
-                      <Text style={{ fontWeight: "bold" }}>{questions.currentQuestion.index}</Text>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {questions.currentQuestion.index}
+                      </Text>
                       /0{questions.total}
                     </Text>
                   </View>
@@ -370,7 +410,10 @@ function VocabularyLessons() {
                 <View style={styles.instructionContainer}>
                   <Text style={styles.instructionsText}>Defination</Text>
                   <Text style={styles.lessonText}>
-                    <Text style={{ fontWeight: "bold" }}>{questions.currentQuestion.index}</Text>/0
+                    <Text style={{ fontWeight: "bold" }}>
+                      {questions.currentQuestion.index}
+                    </Text>
+                    /0
                     {questions.total}
                   </Text>
                 </View>
@@ -661,7 +704,7 @@ function VocabularyLessons() {
           setIsVisible={setShowModal}
         />
       )}
-    </>
+    </BlurView>
   );
 }
 
@@ -978,6 +1021,14 @@ const styles = StyleSheet.create({
   resultScoreText: {
     fontSize: 14,
     color: "#2D1C1CE6",
+  },
+   blurContainer: {
+    flex: 1,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    zIndex: 200,
+    position: "relative",
+
   },
 });
 

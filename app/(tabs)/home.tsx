@@ -47,6 +47,7 @@ export default function HomeTab() {
     })();
   }, []);
 
+  const balance = lessonList?.findLastIndex((lesson) => lesson.completed) || 0;
   return (
     <SafeAreaView style={styles.container}>
       {store.thanksNotification && (
@@ -78,7 +79,7 @@ export default function HomeTab() {
             <View style={styles.accountsHeadingView}>
               <Text style={styles.accountsHeadingText}> Available Balance</Text>
               <Text style={styles.accountsBalanceText}>
-                0
+                {balance + 1}
                 <Text
                   style={{
                     fontSize: 12,
@@ -176,7 +177,7 @@ export default function HomeTab() {
                     />
                     <Pressable
                       onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                      disabled={item.disabled}
+                      disabled={item.completed}
                     >
                       <View style={{ paddingBottom: 12 }}>
                         <Text style={[styles.lessonText, { color: "white" }]}>
