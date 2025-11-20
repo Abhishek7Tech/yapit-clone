@@ -3,21 +3,21 @@ import Styles from "@/app/utils/styles";
 import { Feather, FontAwesome6 } from "@expo/vector-icons";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 export default function GradingMenu({
-    isRecording,
+  isRecording,
   showResults,
   gradingData,
   opacity,
-  submit,
+  audioRecorded,
   loadingResults,
   playButton,
   playRecording,
-  pauseRecording
+  pauseRecording,
 }: {
-  isRecording: boolean;  
+  isRecording: boolean;
   showResults: boolean;
   gradingData: GradesData | null;
   opacity: Animated.AnimatedInterpolation<string | number>;
-  submit: boolean;
+  audioRecorded: boolean;
   loadingResults: boolean;
   playButton: boolean;
   playRecording: () => void;
@@ -42,7 +42,7 @@ export default function GradingMenu({
         {/* PLAYBACK BUTTON */}
         {loadingResults && (
           <>
-            {!playButton && !isRecording && submit && (
+            {!playButton && !isRecording && audioRecorded && (
               <Pressable
                 onPress={() => playRecording()}
                 style={[

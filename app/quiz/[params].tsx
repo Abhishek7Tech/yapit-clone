@@ -17,7 +17,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { speak } from "expo-speech";
 import {
   Animated,
-  Easing,
   Pressable,
   StatusBar,
   StyleSheet,
@@ -44,10 +43,10 @@ function VocabularyLessons() {
 
   const [startRecording, setStartRecording] = useState(false);
   // Handles submit button state
-  const [submit, setSubmit] = useState(false);
+  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
   // Handles audio submission state
   const [submitAudio, setSubmitAudio] = useState(false);
-
+  const [audioRecorded, setAudioRecorded] = useState(false);
   const [playButton, setPlayButton] = useState(false);
   const [notifications, setNotifications] = useState(false);
 
@@ -66,7 +65,7 @@ function VocabularyLessons() {
   const recorderState = useAudioRecorderState(audioRecorder);
   const [questions, setQuestions] = useState<Questions | null>(null);
   const [submitNotification, setSubmitNotification] = useState(false);
-  const [diableButtons, setDisableButtons] = useState(false);
+  const [disableRetryBtn, setDisableRetryBtn] = useState(false);
   const store = useNotificationStore();
 
   const params = useLocalSearchParams();
@@ -128,7 +127,7 @@ function VocabularyLessons() {
   };
 
   const stopRecording = async () => {
-    if (submit) {
+    if (audioRecorded) {
       return;
     }
     await audioRecorder.stop();
@@ -136,7 +135,8 @@ function VocabularyLessons() {
     if (audioRecorder.uri) {
       player.replace(audioRecorder.uri);
     }
-    setSubmit(true);
+    setAudioRecorded(true);
+    setDisableSubmitBtn(false);
   };
 
   const playRecording = () => {
@@ -157,6 +157,7 @@ function VocabularyLessons() {
 
   const recordButtonHandler = async () => {
     setStartRecording(true);
+    setDisableSubmitBtn(true);
     console.log("Clicked");
     const hasPermission = await askForMicroPhonePermission();
     if (!hasPermission) return;
@@ -168,7 +169,8 @@ function VocabularyLessons() {
 
   const retryHandler = () => {
     setStartRecording(false);
-    setSubmit(false);
+    setDisableSubmitBtn(false);
+    setAudioRecorded(false);
     setPlayButton(false);
     setShowResults(false);
     setSubmitAudio(false);
@@ -177,15 +179,21 @@ function VocabularyLessons() {
 
   const submitAudioHandler = async () => {
     setSubmitAudio(true);
+    setDisableSubmitBtn(true);
+    setDisableRetryBtn(true);
     setTimeout(async () => {
       setShowResults(true);
       setLoadingResults(true);
+      setDisableRetryBtn(false);
+      setDisableSubmitBtn(false);
     }, 3000);
     const response = await fetch("/api/grading");
     const data = await response.json();
     setGradeResults(data.result);
   };
+
   const nextButtonHandler = async () => {
+    setDisableRetryBtn(true);
     const response = await fetch(`/api/question/${params.params}`, {
       method: "POST",
       headers: {
@@ -298,7 +306,7 @@ function VocabularyLessons() {
               showResults={showResults}
               gradingData={gradingData}
               opacity={opacity}
-              submit={submit}
+              audioRecorded={audioRecorded}
               loadingResults={loadingResults}
               playButton={playButton}
               playRecording={playRecording}
@@ -340,7 +348,7 @@ function VocabularyLessons() {
               <RecordingMenu
                 isRecording={recorderState.isRecording}
                 opacity={opacity}
-                submit={submit}
+                audioRecorded={audioRecorded}
                 playButton={playButton}
                 stopRecording={stopRecording}
                 playRecording={playRecording}
@@ -351,7 +359,7 @@ function VocabularyLessons() {
               <Pressable
                 onPress={() => retryHandler()}
                 style={styles.retryButton}
-                disabled={!loadingResults}
+                disabled={disableRetryBtn}
               >
                 <Text style={styles.retryButtonText}>Retry</Text>
               </Pressable>
@@ -359,15 +367,14 @@ function VocabularyLessons() {
               {!showResults && (
                 <Pressable
                   onPress={() => submitAudioHandler()}
-                  disabled={!submit || submitAudio}
+                  disabled={disableSubmitBtn}
                   style={[
                     styles.submitButton,
                     {
-                      backgroundColor: submit
-                        ? Styles.backgroundSecondary
-                        : Styles.backgroundSecondaryDark,
-                      borderColor:
-                        submit || submitAudio ? "black" : "#00000099",
+                      backgroundColor: disableSubmitBtn
+                        ? Styles.backgroundSecondaryDark
+                        : Styles.backgroundSecondary,
+                      borderColor: disableSubmitBtn ? "black" : "#00000099",
                     },
                   ]}
                 >

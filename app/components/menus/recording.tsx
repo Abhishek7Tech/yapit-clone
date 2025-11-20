@@ -15,7 +15,7 @@ import Feather from "@expo/vector-icons/Feather";
 export default function RecordingMenu({
   isRecording,
   opacity,
-  submit,
+  audioRecorded,
   playButton,
   stopRecording,
   playRecording,
@@ -23,7 +23,7 @@ export default function RecordingMenu({
 }: {
   isRecording: boolean;
   opacity: Animated.AnimatedInterpolation<string | number>;
-  submit: boolean;
+  audioRecorded: boolean;
   playButton: boolean;
   stopRecording: () => void;
   playRecording: () => void;
@@ -51,7 +51,7 @@ export default function RecordingMenu({
         )}
 
         {/* PLAYBACK BUTTON */}
-        {!playButton && !isRecording && submit && (
+        {!playButton && !isRecording && audioRecorded && (
           <Pressable
             onPress={() => playRecording()}
             style={styles.playbackButton}
