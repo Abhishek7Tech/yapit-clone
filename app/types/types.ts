@@ -25,3 +25,10 @@ export type GradesData = {
   grade: string;
   remarks: string[];
 };
+
+ export type Grades = {
+    total: number;
+    accuracy: GradesData;
+    fluency: GradesData;
+    intonation: GradesData;
+  };
