@@ -18,6 +18,8 @@ import Styles from "../utils/styles";
 import Streak from "../components/streak/streak";
 import { LessonsList } from "../types/types";
 import Lessons from "../components/lessons/lessons";
+import Loading from "../components/loading/loading";
+import useBalanceStore from "../store/balanceStore";
 const coinUrl = require("@/assets/images/coin.webp");
 
 export default function HomeTab() {
@@ -28,7 +30,7 @@ export default function HomeTab() {
     setNotifications(true);
   };
   const store = useNotificationStore();
-
+  const balanceStore = useBalanceStore();
   useEffect(() => {
     (async () => {
       const response = await fetch("/api/lessons");
@@ -40,10 +42,13 @@ export default function HomeTab() {
   }, []);
 
   const balance = lessonList?.findLastIndex((lesson) => lesson.completed) || 0;
-  if(!lessonList) {
-    return <SafeAreaView>
-      <Text>Loading...</Text>
-    </SafeAreaView>
+  balanceStore.setBalance(balance);
+  if (!lessonList) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Loading />
+      </SafeAreaView>
+    );
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -99,10 +104,10 @@ export default function HomeTab() {
         </View>
 
         {/* StreakView */}
-       <Streak/>
+        <Streak />
 
         {/* //Lessons */}
-        <Lessons lessonList={lessonList}/>
+        <Lessons lessonList={lessonList} />
 
         {/* // Talk to Teacher  */}
         <View style={styles.talkToTeacherContainer}>

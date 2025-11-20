@@ -37,6 +37,7 @@ import Cards from "../components/cards/card";
 import RecordingMenu from "../components/menus/recording";
 import GradingMenu from "../components/menus/grading";
 import ScoreMenu from "../components/menus/scores";
+import Loading from "../components/loading/loading";
 function VocabularyLessons() {
   const recordAnim = useRef(new Animated.Value(1)).current;
 
@@ -198,7 +199,6 @@ function VocabularyLessons() {
       questions?.total !== questions?.currentQuestion.index
     ) {
       const data = await response.json();
-      console.log("Data", data);
       setQuestions(data.question[0]);
       retryHandler();
     }
@@ -218,7 +218,7 @@ function VocabularyLessons() {
   if (!questions) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Loading...</Text>
+        <Loading />
       </SafeAreaView>
     );
   }
