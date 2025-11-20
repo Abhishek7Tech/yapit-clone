@@ -42,7 +42,12 @@ export default function HomeTab() {
   }, []);
 
   const balance = lessonList?.findLastIndex((lesson) => lesson.completed) || 0;
-  balanceStore.setBalance(balance);
+  const incompleteLessons = lessonList?.filter(
+    (lesson) => lesson.completed === false
+  ).length;
+  useEffect(() => {
+    balanceStore.setBalance(balance);
+  }, [balance]);
   if (!lessonList) {
     return (
       <SafeAreaView style={styles.container}>
@@ -67,7 +72,7 @@ export default function HomeTab() {
           <Notifications
             notification={notifications}
             handleNotifications={setNotifications}
-            message={"Finish 5 more lessons to unlock the quiz."}
+            message={`Finish ${incompleteLessons} more lessons to unlock the quiz.`}
             icon="notification"
           />
         )}

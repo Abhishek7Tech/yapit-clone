@@ -38,6 +38,7 @@ import RecordingMenu from "../components/menus/recording";
 import GradingMenu from "../components/menus/grading";
 import ScoreMenu from "../components/menus/scores";
 import Loading from "../components/loading/loading";
+import { recordContainerStyle } from "../utils/recordContainerStyle";
 function VocabularyLessons() {
   const recordAnim = useRef(new Animated.Value(1)).current;
 
@@ -65,6 +66,7 @@ function VocabularyLessons() {
   const recorderState = useAudioRecorderState(audioRecorder);
   const [questions, setQuestions] = useState<Questions | null>(null);
   const [submitNotification, setSubmitNotification] = useState(false);
+  const [diableButtons, setDisableButtons] = useState(false);
   const store = useNotificationStore();
 
   const params = useLocalSearchParams();
@@ -321,7 +323,7 @@ function VocabularyLessons() {
             style={[
               styles.recordAndResultContainer,
               {
-                backgroundColor: showResults ? Styles.backgroundColor : "white",
+                backgroundColor: recordContainerStyle(submitAudio, showResults),
               },
             ]}
           >
@@ -334,7 +336,7 @@ function VocabularyLessons() {
             )}
 
             {/* // RECORDING  */}
-            {!showResults && (
+            {!showResults && !submitAudio && (
               <RecordingMenu
                 isRecording={recorderState.isRecording}
                 opacity={opacity}
@@ -345,7 +347,7 @@ function VocabularyLessons() {
                 pauseRecording={pauseRecording}
               />
             )}
-            <View style={styles.recordButtonsContainer}>
+            <View style={[styles.recordButtonsContainer, ,]}>
               <Pressable
                 onPress={() => retryHandler()}
                 style={styles.retryButton}
@@ -357,14 +359,15 @@ function VocabularyLessons() {
               {!showResults && (
                 <Pressable
                   onPress={() => submitAudioHandler()}
-                  disabled={!submit}
+                  disabled={!submit || submitAudio}
                   style={[
                     styles.submitButton,
                     {
                       backgroundColor: submit
                         ? Styles.backgroundSecondary
                         : Styles.backgroundSecondaryDark,
-                      borderColor: submit ? "black" : "#00000099",
+                      borderColor:
+                        submit || submitAudio ? "black" : "#00000099",
                     },
                   ]}
                 >
