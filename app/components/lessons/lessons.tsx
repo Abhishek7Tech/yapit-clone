@@ -11,7 +11,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { LessonsList } from "@/app/types/types";
 
 
-export default function Lessons({lessonList}: {lessonList:LessonsList}) {
+export default function Lessons({lessonList}: {lessonList:LessonsList[]}) {
 
     return (
          <View>

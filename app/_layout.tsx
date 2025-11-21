@@ -47,6 +47,12 @@ export default function RootLayout() {
           headerShown: false,
         }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="tutor"
+        options={{
+          headerShown: false,
+        }}
+      ></Stack.Screen>
     </Stack>
   );
 }

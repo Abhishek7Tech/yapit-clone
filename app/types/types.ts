@@ -4,7 +4,7 @@ export type LessonsList = {
   disabled: boolean;
   completed: boolean;
   language: string;
-}[];
+};
 
 export type Questions = {
   id: number;

@@ -25,7 +25,7 @@ const coinUrl = require("@/assets/images/coin.webp");
 export default function HomeTab() {
   const today = new Date().getDay();
   const [notifications, setNotifications] = useState(false);
-  const [lessonList, getLessonList] = useState<LessonsList | null>(null);
+  const [lessonList, getLessonList] = useState<LessonsList[] | null>(null);
   const quizHandler = () => {
     setNotifications(true);
   };
@@ -35,7 +35,7 @@ export default function HomeTab() {
     (async () => {
       const response = await fetch("/api/lessons");
       const data = await response.json();
-      if (data) {
+      if (data.lessonsList) {
         getLessonList(data.lessonsList);
       }
     })();
