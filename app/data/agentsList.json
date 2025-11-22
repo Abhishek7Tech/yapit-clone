@@ -1,0 +1,32 @@
+[
+  {
+    "level": "A1",
+    "title": "Beginner Tutor",
+    "description": "Perfect for absolute beginners"
+  },
+  {
+    "level": "A2",
+    "title": "Elementary Tutor",
+    "description": "For elementary students"
+  },
+  {
+    "level": "B1",
+    "title": "Intermediate Tutor",
+    "description": "For intermediate learners"
+  },
+  {
+    "level": "B2",
+    "title": "Upper-Intermediate Tutor",
+    "description": "For strong B-level learners"
+  },
+  {
+    "level": "C1",
+    "title": "Advanced Tutor",
+    "description": "For advanced learners"
+  },
+  {
+    "level": "C2",
+    "title": "Proficiency Tutor",
+    "description": "Near-native level"
+  }
+]

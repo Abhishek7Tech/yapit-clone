@@ -26,9 +26,15 @@ export type GradesData = {
   remarks: string[];
 };
 
- export type Grades = {
-    total: number;
-    accuracy: GradesData;
-    fluency: GradesData;
-    intonation: GradesData;
-  };
+export type Grades = {
+  total: number;
+  accuracy: GradesData;
+  fluency: GradesData;
+  intonation: GradesData;
+};
+
+export type Agent = {
+  level: string;
+  title: string;
+  description: string;
+}

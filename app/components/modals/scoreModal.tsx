@@ -26,13 +26,7 @@ export default function ScoreModal({
   modelData: GradesData
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
-  
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({ tabBarStyle: { display: "none" } });
-
-    return () => navigation.setOptions({ tabBarStyle: undefined });
-  }, []);
+ 
   useEffect(() => {
     if (isVisible) {
       Animated.timing(slideAnim, {

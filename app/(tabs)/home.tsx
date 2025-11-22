@@ -16,31 +16,36 @@ const coinUrl = require("@/assets/images/coin.webp");
 export default function HomeTab() {
   const today = new Date().getDay();
   const [notifications, setNotifications] = useState(false);
-  const [lessonList, getLessonList] = useState<LessonsList[] | null>(null);
+  const [lessonList, setLessonList] = useState<LessonsList[]>([]);
   const quizHandler = () => {
     setNotifications(true);
   };
   const store = useNotificationStore();
   const balanceStore = useBalanceStore();
-  
+
   useEffect(() => {
     (async () => {
       const response = await fetch("/api/lessons");
       const data = await response.json();
       if (data.lessonsList) {
-        getLessonList(data.lessonsList);
+        setLessonList(data.lessonsList);
       }
     })();
   }, []);
 
-  const balance = lessonList?.findLastIndex((lesson) => lesson.completed) || 0;
   const incompleteLessons = lessonList?.filter(
     (lesson) => lesson.completed === false
   ).length;
+
   useEffect(() => {
-    balanceStore.setBalance(balance);
-  }, [balance]);
-  if (!lessonList) {
+    console.log("DATA", lessonList);
+    if (lessonList.length) {
+      const completedLessons = lessonList.filter((lesson) => lesson.completed);
+      balanceStore.setBalance(completedLessons.length || 0);
+    }
+  }, [lessonList]);
+
+  if (!lessonList.length) {
     return (
       <SafeAreaView style={styles.container}>
         <Loading />
@@ -78,7 +83,7 @@ export default function HomeTab() {
             <View style={styles.accountsHeadingView}>
               <Text style={styles.accountsHeadingText}> Available Balance</Text>
               <Text style={styles.accountsBalanceText}>
-                {balance + 1}
+                {balanceStore.balance}
                 <Text
                   style={{
                     fontSize: 12,

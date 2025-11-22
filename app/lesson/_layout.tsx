@@ -27,11 +27,6 @@ export default function LessonsLayout() {
           ),
         }}
       ></Stack.Screen>
-      <Stack.Screen
-        name="[params]"
-        options={{ headerShown: false }}
-      ></Stack.Screen>
-
      
     </Stack>
   );

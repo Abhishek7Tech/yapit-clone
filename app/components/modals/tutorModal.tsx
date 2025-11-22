@@ -15,7 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const TutorImg = require("@/assets/images/tutor.png");
 const YapCoin = require("@/assets/images/coin.webp");
 const screenDimensions = Dimensions.get("screen").height;
-export default function TutorModal() {
+export default function TutorModal({
+  balance,
+  spendButtonHandler,
+}: {
+  balance: number;
+  spendButtonHandler: () => void;
+}) {
   const slideAnim = useRef(new Animated.Value(200)).current;
   const tabsStore = useTabsStore();
   useEffect(() => {
@@ -28,10 +34,7 @@ export default function TutorModal() {
   const modalHandler = () => {
     router.back();
   };
-  const spendButtonHandler =() => {
-    tabsStore.setShowTabs(false);
-    router.push("/(tabs)/home");
-  }
+ 
   return (
     <SafeAreaView style={styles.modalContainer}>
       <Pressable onPress={() => modalHandler()} style={{ flex: 1 }}>
@@ -54,9 +57,16 @@ export default function TutorModal() {
           improve pronunciation in real-time.
         </Text>
         <View style={styles.tutorButtonContainer}>
-          <Pressable onPress={() => spendButtonHandler()} style={styles.tutorButton}>
-            <Image style={styles.tutorButtonImg} source={YapCoin} accessibilityLabel="Yap coin"></Image>
-            <Text style={styles.tutorButtonText}>Spend 1 YAP</Text>
+          <Pressable
+            onPress={() => spendButtonHandler()}
+            style={styles.tutorButton}
+          >
+            <Image
+              style={styles.tutorButtonImg}
+              source={YapCoin}
+              accessibilityLabel="Yap coin"
+            ></Image>
+            <Text style={styles.tutorButtonText}>Spend {balance} YAP</Text>
           </Pressable>
         </View>
       </Animated.View>
@@ -108,11 +118,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-
   },
   tutorButtonContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 16
+    paddingBottom: 16,
   },
   tutorButton: {
     paddingVertical: 12,
@@ -127,11 +136,11 @@ const styles = StyleSheet.create({
   },
   tutorButtonImg: {
     width: 20,
-    height: 20
+    height: 20,
   },
   tutorButtonText: {
     color: "white",
     fontWeight: "600",
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
