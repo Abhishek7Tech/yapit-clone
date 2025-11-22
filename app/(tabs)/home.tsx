@@ -38,7 +38,6 @@ export default function HomeTab() {
   ).length;
 
   useEffect(() => {
-    console.log("DATA", lessonList);
     if (lessonList.length) {
       const completedLessons = lessonList.filter((lesson) => lesson.completed);
       balanceStore.setBalance(completedLessons.length || 0);
