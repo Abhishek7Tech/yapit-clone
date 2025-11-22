@@ -1,5 +1,8 @@
+import { useNavigation } from "expo-router";
 import { Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useTabsStore from "../store/tabsStore";
+import { useEffect } from "react";
 
 export default function ProfileTab() {
   return (

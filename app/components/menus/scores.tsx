@@ -1,8 +1,8 @@
 import { Grades, GradesData } from "@/app/types/types";
+import scoreStyles from "@/app/utils/scoreStyles";
 import Styles from "@/app/utils/styles";
 import { Entypo } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import scoreStyles from "@/app/utils/scoreStyles";
 
 export default function ScoreMenu({
   gradeResults,

@@ -1,25 +1,16 @@
 import { FontAwesome5 } from "@expo/vector-icons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  FlatList,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LessonsList } from "@/app/types/types";
+import Loading from "@/app/components/loading/loading";
+import Lessons from "../components/lessons/lessons";
 import Notifications from "../components/notification/notification";
+import Streak from "../components/streak/streak";
+import useBalanceStore from "../store/balanceStore";
 import useNotificationStore from "../store/thanksNotification";
 import Styles from "../utils/styles";
-import Streak from "../components/streak/streak";
-import { LessonsList } from "../types/types";
-import Lessons from "../components/lessons/lessons";
-import Loading from "../components/loading/loading";
-import useBalanceStore from "../store/balanceStore";
 const coinUrl = require("@/assets/images/coin.webp");
 
 export default function HomeTab() {
@@ -31,6 +22,7 @@ export default function HomeTab() {
   };
   const store = useNotificationStore();
   const balanceStore = useBalanceStore();
+  
   useEffect(() => {
     (async () => {
       const response = await fetch("/api/lessons");

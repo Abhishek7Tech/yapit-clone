@@ -1,42 +1,38 @@
 import Entypo from "@expo/vector-icons/Entypo";
-import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Foundation from "@expo/vector-icons/Foundation";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
-  AudioModule,
-  RecordingPresets,
-  setAudioModeAsync,
-  useAudioPlayer,
-  useAudioPlayerStatus,
-  useAudioRecorder,
-  useAudioRecorderState,
+    AudioModule,
+    RecordingPresets,
+    setAudioModeAsync,
+    useAudioPlayer,
+    useAudioPlayerStatus,
+    useAudioRecorder,
+    useAudioRecorderState,
 } from "expo-audio";
 import { router, useLocalSearchParams } from "expo-router";
-import { speak } from "expo-speech";
 import {
-  Animated,
-  Pressable,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
+    Animated,
+    Pressable,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 
 import { BlurView } from "expo-blur";
 import { useEffect, useRef, useState } from "react";
+import { Grades, GradesData, Questions } from "@/app/types/types";
+import Cards from "../components/cards/card";
+import Loading from "../components/loading/loading";
+import GradingMenu from "../components/menus/grading";
+import RecordingMenu from "../components/menus/recording";
+import ScoreMenu from "../components/menus/scores";
 import ScoreModal from "../components/modals/scoreModal";
 import Notifications from "../components/notification/notification";
 import useNotificationStore from "../store/thanksNotification";
-import { Grades, GradesData, Questions } from "../types/types";
-import Cards from "../components/cards/card";
-import RecordingMenu from "../components/menus/recording";
-import GradingMenu from "../components/menus/grading";
-import ScoreMenu from "../components/menus/scores";
-import Loading from "../components/loading/loading";
 import { recordContainerStyle } from "../utils/recordContainerStyle";
 function VocabularyLessons() {
   const recordAnim = useRef(new Animated.Value(1)).current;

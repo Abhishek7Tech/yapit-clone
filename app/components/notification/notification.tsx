@@ -1,9 +1,9 @@
 import { Feather, FontAwesome, Fontisto, Ionicons } from "@expo/vector-icons";
 import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text
+    Animated,
+    Pressable,
+    StyleSheet,
+    Text
 } from "react-native";
 
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";

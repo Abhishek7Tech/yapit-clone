@@ -1,26 +1,21 @@
 import {
-  Animated,
-  Dimensions,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
+    Animated,
+    Dimensions,
+    FlatList,
+    Pressable,
+    StyleSheet,
+    Text,
+    View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../../utils/styles";
 // import  from "react-native-reanimated";
+import { GradesData } from "@/app/types/types";
+import { useNavigation } from "expo-router";
 import { useEffect, useRef } from "react";
 import scoreStyles from "../../utils/scoreStyles";
 const screenDimensions = Dimensions.get("screen").height;
 
-  type GradesData = {
-    title: string,
-     score: number;
-    feedback: string;
-    grade: string;
-    remarks: string[];
-  }
 export default function ScoreModal({
   isVisible,
   setIsVisible,
@@ -31,6 +26,13 @@ export default function ScoreModal({
   modelData: GradesData
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
+  
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({ tabBarStyle: { display: "none" } });
+
+    return () => navigation.setOptions({ tabBarStyle: undefined });
+  }, []);
   useEffect(() => {
     if (isVisible) {
       Animated.timing(slideAnim, {
@@ -48,10 +50,6 @@ export default function ScoreModal({
     }).start(() => setIsVisible(false));
   };
 
-  const DummyDetails = [
-    "Audio quality is poor.",
-    "Speech is absent or unintelligible.",
-  ];
   return (
     <SafeAreaView style={styles.modalContainer}>
       <Pressable onPress={() => hideModalHandler()} style={{ flex: 1 }}>
@@ -94,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     zIndex: 400,
     justifyContent: "flex-end",
+    width: "100%"
   },
   scoreModal: {
     paddingTop: 12,
@@ -103,7 +102,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     backgroundColor: Styles.backgroundColor,
     minHeight: screenDimensions * 0.30,
-    width: "100%"
   },
   scoreContainer: {
     flexDirection: "column",

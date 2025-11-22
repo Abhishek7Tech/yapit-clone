@@ -1,14 +1,14 @@
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { Link, router } from "expo-router";
+import { LessonsList } from "@/app/types/types";
 import Styles from "@/app/utils/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { LessonsList } from "@/app/types/types";
+import { Link, router } from "expo-router";
+import {
+    FlatList,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 
 
 export default function Lessons({lessonList}: {lessonList:LessonsList[]}) {

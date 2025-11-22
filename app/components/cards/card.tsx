@@ -1,17 +1,16 @@
-import {
-  Animated,
-  Easing,
-  Pressable,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import Foundation from "@expo/vector-icons/Foundation";
-import Styles from "@/app/utils/styles";
-import { useRef, useState } from "react";
 import { Questions } from "@/app/types/types";
+import Styles from "@/app/utils/styles";
+import Foundation from "@expo/vector-icons/Foundation";
 import { speak } from "expo-speech";
+import { useRef, useState } from "react";
+import {
+    Animated,
+    Easing,
+    Pressable,
+    StyleSheet,
+    Text,
+    View
+} from "react-native";
 
 export default function Cards({questions}: {questions: Questions}) {
       const flip = useRef(new Animated.Value(0)).current;
