@@ -23,7 +23,6 @@ export default function TutorModal({
   spendButtonHandler: () => void;
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
-  const tabsStore = useTabsStore();
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: 0,

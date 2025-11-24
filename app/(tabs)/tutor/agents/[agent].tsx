@@ -1,6 +1,6 @@
 import { ImageBackground } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../../../utils/styles";
 import { useEffect, useState } from "react";
@@ -15,66 +15,83 @@ export default function Agent() {
   const params = useLocalSearchParams();
   const tabStore = useTabsStore();
   const [switchToChat, setSwitchTChat] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   console.log("Agent params", tabStore.showTabs);
   useEffect(() => {
     tabStore.setShowTabs(true);
   }, []);
   const chatOptionsHandler = () => {
-    setSwitchTChat(!switchToChat);
+    setShowModal(true);
   };
 
+  const switchChatMethod = () => {
+    setSwitchTChat(!switchToChat);
+    setShowModal(false);
+  };
+  const modelHandler = () => {
+    setShowModal(false);
+  };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    style={styles.container}>
       <ImageBackground
         imageStyle={styles.imageStyles}
         source={TutorImg}
         style={styles.imageContainer}
       >
-        <View style={styles.sessionTimerContainer}>
-          <Text>You have 3:00 left in your tutor session.</Text>
-        </View>
-        <SafeAreaView>
-          <View style={styles.recordingContainer}>
-            <TextInput
-              readOnly={switchToChat ? false : true}
-              style={styles.recordingContainerText}
-              placeholder="Live mode - press Start to begin."
-            ></TextInput>
-            <View style={styles.recordingButtonsContainer}>
-              <View style={styles.chatOptionsContainer}>
-                <Pressable
-                  onPress={() => chatOptionsHandler()}
-                  style={styles.switchChatOptionsContainer}
-                >
-                  <View style={switchToChat ? styles.activeChatOption : {}}>
-                    <AntDesign
-                      name="message"
-                      size={20}
-                      color={switchToChat ? "white" : "#00000066"}
-                    />
+          <View style={styles.sessionTimerContainer}>
+            <Text>You have 3:00 left in your tutor session.</Text>
+          </View>
+          <View style={{position: "relative"}}>
+            <View style={styles.recordingContainer}>
+              <TextInput
+                readOnly={switchToChat ? false : true}
+                style={styles.recordingContainerText}
+                placeholder="Live mode - press Start to begin."
+              ></TextInput>
+              <View style={styles.recordingButtonsContainer}>
+                <View style={styles.chatOptionsContainer}>
+                  <Pressable
+                    onPress={() => chatOptionsHandler()}
+                    style={styles.switchChatOptionsContainer}
+                  >
+                    <View style={switchToChat ? styles.activeChatOption : {}}>
+                      <AntDesign
+                        name="message"
+                        size={20}
+                        color={switchToChat ? "white" : "#00000066"}
+                      />
+                    </View>
+                    <View style={switchToChat ? {} : styles.activeChatOption}>
+                      <Feather
+                        name="mic"
+                        size={20}
+                        color={!switchToChat ? "white" : "#00000066"}
+                      />
+                    </View>
+                  </Pressable>
+                </View>
+                <Pressable style={styles.recordingButton}>
+                  <View>
+                    <FontAwesome name="microphone" size={24} color="white" />
                   </View>
-                  <View style={switchToChat ? {} : styles.activeChatOption}>
-                    <Feather
-                      name="mic"
-                      size={20}
-                      color={!switchToChat ? "white" : "#00000066"}
-                    />
-                  </View>
+                  <Text style={styles.recordingButtonText}>Record</Text>
                 </Pressable>
               </View>
-              <Pressable style={styles.recordingButton}>
-                <View>
-                  <FontAwesome name="microphone" size={24} color="white" />
-                </View>
-                <Text style={styles.recordingButtonText}>Record</Text>
-              </Pressable>
             </View>
           </View>
-        </SafeAreaView>
-        <AgentModal/>
-      </ImageBackground>
-    </View>
+        </ImageBackground>
+        {showModal && (
+          <AgentModal
+          switchChatMethod={switchChatMethod}
+          switchToChat={switchToChat}
+          modelHandler={modelHandler}
+          />
+        )}
+        </KeyboardAvoidingView>
   );
 }
 
@@ -86,6 +103,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
+    justifyContent: "space-between",
+    paddingBottom: 16
   },
   imageStyles: {
     opacity: 0.14,

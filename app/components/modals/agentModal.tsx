@@ -1,53 +1,100 @@
 import Styles from "@/app/utils/styles";
-import { useRef } from "react";
-import { Animated, Pressable, View, StyleSheet, Text } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { Tabs } from "expo-router";
+import { useEffect, useRef } from "react";
+import {
+  Animated,
+  Pressable,
+  View,
+  StyleSheet,
+  Text,
+  StatusBar,
+  KeyboardAvoidingView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function AgentModal() {
+export default function AgentModal({
+  switchChatMethod,
+  switchToChat,
+  modelHandler,
+}: {
+  switchChatMethod: () => void;
+  switchToChat: boolean;
+  modelHandler: () => void;
+}) {
   const slideAnim = useRef(new Animated.Value(200)).current;
 
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true
+    }).start()
+  },[])
+
   return (
-    <SafeAreaView>
-      <Pressable>
+    <View style={styles.agentsModelContainer}>
+      <Pressable style={{flex: 1}} onPress={() => modelHandler()}>
         <View></View>
       </Pressable>
+      
       <Animated.View
         style={[
           styles.switchChatModal,
-          { transform: [{ translateY: slideAnim }] },
+
+          {
+            transform: [{ translateY: slideAnim }],
+          },
         ]}
       >
         <View style={styles.modalWall}></View>
-        <Text style={styles.modalHeading}>Switch To Text?</Text>
+        <Text style={styles.modalHeading}>
+          Switch To {switchToChat ? "Live Service?" : "Text?"}
+        </Text>
         <Text style={styles.modalSubHeading}>
-          You are about to switch to Live Service. You will be able to interact
-          with our live chat agents. Starting Live Service will begin a new
-          conversation and clear your current chat history.
+          You are about to switch to {switchToChat ? "Live Service" : "Text"}.
+          You will be able to interact with our live chat agents. Starting{" "}
+          {switchToChat ? "Live Service" : "Text"} will begin a new conversation
+          and clear your current chat history.
         </Text>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.switchButton}>
+          <Pressable
+            onPress={() => switchChatMethod()}
+            style={styles.switchButton}
+          >
             <Text style={styles.switchButtonText}>Switch</Text>
           </Pressable>
-          <Pressable style={styles.cancelButton}>
+          <Pressable onPress={() => modelHandler()} style={styles.cancelButton}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </Pressable>
         </View>
       </Animated.View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+    agentsModelContainer: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
+        flex: 1,
+        backgroundColor: "transparent",
+        zIndex: 400,
+        justifyContent: "flex-end"
+    },
   switchChatModal: {
-    minHeight: 358,
+    minHeight: 280,
     width: "100%",
     paddingTop: 20,
     paddingRight: 20,
-    paddingBottom: 16,
     paddingLeft: 20,
     backgroundColor: "white",
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
+    alignItems: "center",
   },
   modalWall: {
     height: 4,
@@ -74,6 +121,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 16,
     gap: 8,
+    width: "100%"
   },
   switchButton: {
     paddingHorizontal: 16,
