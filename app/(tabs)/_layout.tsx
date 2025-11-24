@@ -1,10 +1,12 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs, useSegments } from "expo-router";
 import useTabsStore from "../store/tabsStore";
+import { hide } from "expo-splash-screen";
 export default function TabLayout() {
   const segments = useSegments();
   const tabStore = useTabsStore();
-  const hideTabBar = segments.some((s) => s === "tutor") && tabStore.showTabs === false;
+  const hideTabBar = segments.some((s) => s === "tutor" || s === "[agent]") && tabStore.showTabs === false;
+  console.log("Hide Tab Bar:", hideTabBar);
   return (
     <Tabs
       screenOptions={{

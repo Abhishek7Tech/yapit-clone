@@ -42,9 +42,9 @@ export default function Tutor() {
     setVerifiyNotification(true);
     showTutorModal(false);
     setTimeout(() => {
-      router.push("/agents");
+      router.push("/(tabs)/tutor/agents");
     }, 2000);
-    tabsStore.setShowTabs(true);
+    // tabsStore.setShowTabs(true);
   };
   return (
     <BlurView

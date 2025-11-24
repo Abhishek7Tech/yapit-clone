@@ -1,13 +1,13 @@
-import { StyleSheet, View, Text, Pressable, ColorValue } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Styles from "../utils/styles";
-import { useEffect, useState } from "react";
-import { Agent } from "../types/types";
-import Loading from "../components/loading/loading";
-import { FlatList } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import genrateAgentsBackground from "../utils/agentsStyles";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { ColorValue, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Loading from "../../../components/loading/loading";
+import { Agent } from "../../../types/types";
+import genrateAgentsBackground from "../../../utils/agentsStyles";
+import Styles from "../../../utils/styles";
 export default function Agents() {
   const [agentsList, setAgentsList] = useState<Agent[]>([]);
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function Agents() {
             alignItems: "center",
           }}
           renderItem={({ item }) => (
-            <Pressable style={{width: "100%", flexDirection: "row"}}>
+            <Pressable onPress={() => router.navigate(`./agents/${item.level}`)} style={{width: "100%", flexDirection: "row"}}>
               <BlurView intensity={20} tint="light" style={{width: "100%"}}>
               <LinearGradient
                 style={styles.agentsListContainer}
