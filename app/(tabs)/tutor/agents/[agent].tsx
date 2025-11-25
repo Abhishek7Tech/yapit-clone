@@ -1,5 +1,5 @@
-import { ImageBackground } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { ImageBackground, StatusBar } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Styles from "../../../utils/styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useTabsStore from "@/app/store/tabsStore";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
@@ -31,6 +31,9 @@ import { speak } from "expo-speech";
 import Messages from "@/app/components/chats/chats";
 import { Chat } from "@/app/types/types";
 import AgentsMenu from "@/app/components/menus/agents";
+import { BlurView } from "expo-blur";
+import Notifications from "@/app/components/notification/notification";
+import useBalanceStore from "@/app/store/balanceStore";
 const TutorImg = require("@/assets/images/tutor.png");
 
 export default function Agent() {
@@ -42,13 +45,46 @@ export default function Agent() {
   const [text, setText] = useState<string | "">("");
   const [messages, setMessages] = useState<Chat[] | []>([]);
   const [showModal, setShowModal] = useState(false);
-  console.log("Agent params", tabStore.showTabs);
+  const [timer, setTimer] = useState({ minutes: 2, seconds: 0 });
+  const balanceStore = useBalanceStore();
+
   useEffect(() => {
     tabStore.setShowTabs(true);
   }, []);
   const chatOptionsHandler = () => {
     setShowModal(true);
   };
+  const remainingRef = useRef<number>(120); // total seconds
+  const intervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    remainingRef.current = 10;
+    setTimer({
+      minutes: Math.floor(remainingRef.current / 60),
+      seconds: remainingRef.current % 60,
+    });
+
+    intervalRef.current = setInterval(() => {
+      remainingRef.current -= 1;
+      const mins = Math.floor(Math.max(0, remainingRef.current) / 60);
+      const secs = Math.max(0, remainingRef.current) % 60;
+      setTimer({ minutes: mins, seconds: secs });
+
+      if (remainingRef.current <= 0 && intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        balanceStore.setBalance(balanceStore.balance - 1);
+        router.navigate("/(tabs)/tutor");
+      }
+    }, 1000) as unknown as number;
+
+    return () => {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, []);
 
   const switchChatMethod = async () => {
     setSwitchTChat(!switchToChat);
@@ -117,7 +153,11 @@ export default function Agent() {
       >
         <View>
           <View style={styles.sessionTimerContainer}>
-            <Text>You have 3:00 left in your tutor session.</Text>
+            <Text>
+              You have {timer.minutes}:
+              {timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds} left in
+              your tutor session.
+            </Text>
           </View>
           {!recorderState.isRecording && !switchToChat && (
             <Text style={styles.recordingStateText}>Press start to begin</Text>

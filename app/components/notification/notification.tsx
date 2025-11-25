@@ -2,6 +2,7 @@ import { Feather, FontAwesome, Fontisto, Ionicons } from "@expo/vector-icons";
 import {
     Animated,
     Pressable,
+    StatusBar,
     StyleSheet,
     Text
 } from "react-native";
@@ -146,9 +147,11 @@ const styles = StyleSheet.create({
     borderColor: "#e3ded3",
     backgroundColor: Styles.backgroundColor,
     paddingHorizontal: 20,
+    marginHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 16,
     marginVertical: 8,
+    top: StatusBar.currentHeight,
     boxShadow:
       "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
   },

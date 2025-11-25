@@ -6,7 +6,6 @@ export default function TabLayout() {
   const segments = useSegments();
   const tabStore = useTabsStore();
   const hideTabBar = segments.some((s) => s === "tutor" || s === "[agent]") && tabStore.showTabs === false;
-  console.log("Hide Tab Bar:", hideTabBar);
   return (
     <Tabs
       screenOptions={{
@@ -36,7 +35,10 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <FontAwesome size={24} name="comments" color={color} />
           ),
-        }}
+          href: "/(tabs)/tutor"
+        }
+        
+      }
       ></Tabs.Screen>
       <Tabs.Screen
         name="profile"

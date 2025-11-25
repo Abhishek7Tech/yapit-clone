@@ -52,86 +52,89 @@ export default function HomeTab() {
     );
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       {store.thanksNotification && (
-        <View>
-          <Notifications
-            notification={notifications}
-            handleNotifications={setNotifications}
-            message={"Thanks for the report!"}
-            icon="thanks"
-          />
-        </View>
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={"Thanks for the report!"}
+          icon="thanks"
+        />
       )}
-      <View>
-        {notifications && (
-          <Notifications
-            notification={notifications}
-            handleNotifications={setNotifications}
-            message={`Finish ${incompleteLessons} more lessons to unlock the quiz.`}
-            icon="notification"
-          />
-        )}
-        <View style={styles.headingView}>
-          <Text style={styles.headingText}>Welcome John Doe</Text>
-          <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>
-        </View>
-        {/* // AccountsView */}
-        <View style={styles.accountsView}>
-          <View style={styles.accountsContainer}>
-            <View style={styles.accountsHeadingView}>
-              <Text style={styles.accountsHeadingText}> Available Balance</Text>
-              <Text style={styles.accountsBalanceText}>
-                {balanceStore.balance}
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontWeight: "400",
-                    textTransform: "capitalize",
-                  }}
-                >
+      {notifications && (
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={`Finish ${incompleteLessons} more lessons to unlock the quiz.`}
+          icon="notification"
+        />
+      )}
+      <SafeAreaView style={styles.container}>
+        <View>
+          <View style={styles.headingView}>
+            <Text style={styles.headingText}>Welcome John Doe</Text>
+            <Text style={styles.subHeadingText}>Hola, ¿cómo estás hoy?</Text>
+          </View>
+          {/* // AccountsView */}
+          <View style={styles.accountsView}>
+            <View style={styles.accountsContainer}>
+              <View style={styles.accountsHeadingView}>
+                <Text style={styles.accountsHeadingText}>
                   {" "}
-                  yap
+                  Available Balance
                 </Text>
-              </Text>
+                <Text style={styles.accountsBalanceText}>
+                  {balanceStore.balance}
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "400",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {" "}
+                    yap
+                  </Text>
+                </Text>
+              </View>
+              <Image
+                source={coinUrl}
+                accessibilityLabel="Yap Coin"
+                contentFit="contain"
+                style={styles.currencyImg}
+              />
             </View>
-            <Image
-              source={coinUrl}
-              accessibilityLabel="Yap Coin"
-              contentFit="contain"
-              style={styles.currencyImg}
-            />
+          </View>
+
+          {/* StreakView */}
+          <Streak />
+
+          {/* //Lessons */}
+          <Lessons lessonList={lessonList} />
+
+          {/* // Talk to Teacher  */}
+          <View style={styles.talkToTeacherContainer}>
+            <Pressable style={styles.talkToTeacherButton}>
+              <Text style={styles.talkToTeacherButtonText}>
+                Talk to Spanish Teacher
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Quiz */}
+          <View>
+            <Text style={styles.quizHeading}>Quiz</Text>
+            <Pressable onPress={() => quizHandler()}>
+              <View style={styles.quizContainer}>
+                <View style={styles.quizIcon}>
+                  <FontAwesome5 name="lock" size={28} color={"#6b7280"} />
+                </View>
+              </View>
+            </Pressable>
           </View>
         </View>
-
-        {/* StreakView */}
-        <Streak />
-
-        {/* //Lessons */}
-        <Lessons lessonList={lessonList} />
-
-        {/* // Talk to Teacher  */}
-        <View style={styles.talkToTeacherContainer}>
-          <Pressable style={styles.talkToTeacherButton}>
-            <Text style={styles.talkToTeacherButtonText}>
-              Talk to Spanish Teacher
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Quiz */}
-        <View>
-          <Text style={styles.quizHeading}>Quiz</Text>
-          <Pressable onPress={() => quizHandler()}>
-            <View style={styles.quizContainer}>
-              <View style={styles.quizIcon}>
-                <FontAwesome5 name="lock" size={28} color={"#6b7280"} />
-              </View>
-            </View>
-          </Pressable>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 

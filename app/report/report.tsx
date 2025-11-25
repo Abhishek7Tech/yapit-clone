@@ -3,12 +3,12 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    Pressable,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Notifications from "../components/notification/notification";
@@ -46,14 +46,12 @@ export default function ReportAnIssue() {
       intensity={submitNotification ? 90 : 0}
     >
       {submitNotification && (
-        <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
-          <Notifications
-            notification={notifications}
-            handleNotifications={setNotifications}
-            message={"Submitting report..."}
-            icon="submit"
-          />
-        </View>
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={"Submitting report..."}
+          icon="submit"
+        />
       )}
 
       <SafeAreaView

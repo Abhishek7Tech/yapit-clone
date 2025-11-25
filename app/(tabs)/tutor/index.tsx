@@ -38,10 +38,13 @@ export default function Tutor() {
         router.push("/(tabs)/home");
       }, 3000);
       tabsStore.setShowTabs(false);
+      return;
     }
+
     setVerifiyNotification(true);
     showTutorModal(false);
     setTimeout(() => {
+      console.log("Pushing...");
       router.push("/(tabs)/tutor/agents");
     }, 2000);
     // tabsStore.setShowTabs(true);
@@ -52,6 +55,23 @@ export default function Tutor() {
       tint="regular"
       intensity={tutorModal ? 90 : 0}
     >
+      {notifications && (
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={`Insufficient Balance!`}
+          icon="alert"
+        />
+      )}
+      {verifyNotification && (
+        <Notifications
+          notification={verifyNotification}
+          handleNotifications={setVerifiyNotification}
+          message={"Verifying..."}
+          icon="submit"
+        />
+      )}
+
       <SafeAreaView
         style={[styles.container, { zIndex: tutorModal ? -10 : 1 }]}
       >
@@ -60,22 +80,6 @@ export default function Tutor() {
           source={TutorImg}
           style={styles.imageContainer}
         >
-          {notifications && (
-            <Notifications
-              notification={notifications}
-              handleNotifications={setNotifications}
-              message={`Insufficient Balance!`}
-              icon="alert"
-            />
-          )}
-          {verifyNotification && (
-            <Notifications
-              notification={verifyNotification}
-              handleNotifications={setVerifiyNotification}
-              message={"Verifying..."}
-              icon="submit"
-            />
-          )}
           <View style={styles.headerContainer}>
             <Pressable style={{}} onPress={() => router.back()}>
               <AntDesign name="left" size={20} color={Styles.textSecondary} />
