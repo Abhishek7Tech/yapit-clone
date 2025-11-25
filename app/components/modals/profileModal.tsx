@@ -11,14 +11,18 @@ import {
 import { useEffect, useRef } from "react";
 import { BlurView } from "expo-blur";
 import Styles from "@/app/utils/styles";
+import Entypo from "@expo/vector-icons/Entypo";
+import { Content } from "@/app/types/types";
 const screenDimensions = Dimensions.get("screen").height;
 
 export default function ProfileModal({
-  showModal,  
+  showModal,
   modelHandler,
+  content,
 }: {
-    showModal: boolean,
+  showModal: boolean;
   modelHandler: () => void;
+  content: Content;
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
 
@@ -30,21 +34,33 @@ export default function ProfileModal({
     }).start();
   }, []);
   return (
-    <BlurView tint="extraLight"
-      intensity={showModal ? 100 : 0} style={styles.profileModelContainer}>
+    <BlurView
+      tint="extraLight"
+      intensity={showModal ? 100 : 0}
+      style={styles.profileModelContainer}
+    >
       <Pressable style={{ flex: 1 }} onPress={() => modelHandler()}>
         <View></View>
       </Pressable>
 
       <Animated.View
         style={[
-            styles.contentContainer,
+          styles.contentContainer,
           {
             transform: [{ translateY: slideAnim }],
           },
         ]}
       >
-        <Text> Modal....</Text>
+        <View style={styles.containerHeader}>
+          <Pressable onPress={() => modelHandler()}>
+            <Entypo name="cross" size={20} color={Styles.textSecondary} />
+          </Pressable>
+          <Text style={styles.containerHeaderText}>{content.name}</Text>
+        </View>
+        <View style={styles.contentTextContainer}>
+          <Text style={styles.contentText}>{content.name}</Text>
+          <Text style={styles.contentText}>{content.content}</Text>
+        </View>
       </Animated.View>
     </BlurView>
   );
@@ -64,6 +80,28 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     height: screenDimensions * 0.75,
-    backgroundColor: Styles.backgroundColor
-  }
+    backgroundColor: Styles.backgroundColor,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+  containerHeader: {
+    paddingHorizontal: 16,
+    height: 64,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 12,
+  },
+  containerHeaderText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Styles.textSecondary,
+  },
+  contentTextContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  contentText: {
+    color: Styles.textSecondary,
+  },
 });

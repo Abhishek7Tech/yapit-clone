@@ -10,23 +10,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 import { Image } from "expo-image";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import useBalanceStore from "../store/balanceStore";
 
 import ProfileData from "../utils/profileList";
-import { RelativePathString, router } from "expo-router";
+import { Link, RelativePathString, router } from "expo-router";
 import { useEffect, useState } from "react";
 import ProfileModal from "../components/modals/profileModal";
+import { Content } from "../types/types";
 
 const coinUrl = require("@/assets/images/coin.webp");
 export default function ProfileTab() {
   const [showModal, setShowModal] = useState(false);
-
+  const [content, setContent] = useState<Content | null>(null);
   const balanceStore = useBalanceStore();
-  useEffect(() => {
-    
-  }, []);
-  const linkButtonHandler = (type: string, link?: RelativePathString) => {
-    if (type === "modal") {
+  useEffect(() => {}, []);
+  const linkButtonHandler = (
+    type: string,
+    link?: RelativePathString,
+    modalContent?: Content
+  ) => {
+    if (type === "modal" && modalContent) {
+      setContent(modalContent);
       setShowModal(true);
       // Open Modal
     }
@@ -82,6 +87,7 @@ export default function ProfileTab() {
       <FlatList
         data={ProfileData}
         contentContainerStyle={{
+          flex: 1,
           paddingTop: 50,
           paddingBottom: 24,
           backgroundColor: "white",
@@ -89,7 +95,7 @@ export default function ProfileTab() {
         renderItem={({ item }) =>
           item.type === "modal" ? (
             <Pressable
-              onPress={() => linkButtonHandler(item.type)}
+              onPress={() => linkButtonHandler(item.type, undefined, item)}
               style={styles.profileLinkButton}
             >
               <Text>{item.name}</Text>
@@ -107,10 +113,34 @@ export default function ProfileTab() {
             </Pressable>
           )
         }
-        ItemSeparatorComponent={() => <View></View>}
+        ItemSeparatorComponent={() => (
+          <View style={styles.profileLinkSeperator}></View>
+        )}
+        ListFooterComponent={() => (
+          <View style={styles.listFooterContainer}>
+            <Text style={styles.listFooterText}>This is a clone project.</Text>
+            <Text style={styles.listFooterText}>
+              Try out the real Yap!{" "}
+              <Link style={{ color: "blue" }} href={"https://www.goyap.ai/"}>
+                here.
+              </Link>
+            </Text>
+            <Link href={"https://github.com/Abhishek7Tech/yapit-clone"}>
+              <FontAwesome
+                name="github"
+                size={24}
+                color={Styles.textSecondary}
+              />
+            </Link>
+          </View>
+        )}
       />
-      {showModal && (
-        <ProfileModal modelHandler={modelHandler} showModal={showModal} />
+      {showModal && content && (
+        <ProfileModal
+          modelHandler={modelHandler}
+          showModal={showModal}
+          content={content}
+        />
       )}
     </SafeAreaView>
   );
@@ -119,6 +149,7 @@ export default function ProfileTab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   accountContainer: {
     backgroundColor: Styles.backgroundColor,
@@ -228,6 +259,16 @@ const styles = StyleSheet.create({
   profileLinkSeperator: {
     width: 1,
     paddingHorizontal: 16,
+    color: Styles.textSecondary,
+  },
+  listFooterContainer: {
+    marginTop: 24,
+    alignItems: "center",
+    gap: 3,
+  },
+  listFooterText: {
+    fontSize: 14,
+    fontWeight: "500",
     color: Styles.textSecondary,
   },
 });

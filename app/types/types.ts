@@ -37,9 +37,25 @@ export type Agent = {
   level: string;
   title: string;
   description: string;
-}
+};
 
 export type Chat = {
   sender: "user" | "agent";
   message: String;
 };
+
+export type Content =
+  | {
+      name: String;
+      heading: String;
+      content: String;
+      type: String;
+      link?: undefined;
+    }
+  | {
+      name: string;
+      type: string;
+      link: string;
+      heading?: undefined;
+      content?: undefined;
+    };
