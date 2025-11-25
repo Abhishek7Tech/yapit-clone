@@ -38,3 +38,8 @@ export type Agent = {
   title: string;
   description: string;
 }
+
+export type Chat = {
+  sender: "user" | "agent";
+  message: String;
+};

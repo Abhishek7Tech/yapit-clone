@@ -28,22 +28,10 @@ import {
   useAudioRecorderState,
 } from "expo-audio";
 import { speak } from "expo-speech";
+import Messages from "@/app/components/chats/chats";
+import { Chat } from "@/app/types/types";
+import AgentsMenu from "@/app/components/menus/agents";
 const TutorImg = require("@/assets/images/tutor.png");
-
-type Chat = {
-  sender: "user" | "agent";
-  message: String;
-};
-
-const meesagesDummyData = [
-  { sender: "user", message: "Hi" },
-  {
-    sender: "agent",
-    message:
-      "Ola, I am Sophia your teacher. Agent is not integrated yet. Please stop the recording.",
-  },
-];
-console.log("ImageBackground is", ImageBackground);
 
 export default function Agent() {
   const params = useLocalSearchParams();
@@ -143,132 +131,18 @@ export default function Agent() {
           )}
         </View>
         {messages.length > 0 && switchToChat && (
-          <View style={styles.messagesContainer}>
-            <FlatList
-              data={messages}
-              contentContainerStyle={{
-                gap: 20,
-                paddingHorizontal: 16,
-              }}
-              renderItem={({ item }) =>
-                item.sender === "user" ? (
-                  <View style={styles.userMessageContainer}>
-                    <LinearGradient
-                      colors={["#3B82F6", "#1D4ED8", "#1E3A8A"]}
-                      style={styles.messageIcon}
-                    >
-                      <Text style={styles.iconText}>U</Text>
-                    </LinearGradient>
-                    <Text
-                      style={[
-                        styles.messageText,
-                        {
-                          backgroundColor: Styles.backgroundSecondary,
-                          color: "white",
-                        },
-                      ]}
-                    >
-                      {item.message}
-                    </Text>
-                  </View>
-                ) : (
-                  <View style={styles.agentMessageContainer}>
-                    <LinearGradient
-                      colors={["#22C55E", "#15803D", "#14532D"]}
-                      style={styles.messageIcon}
-                    >
-                      <Text style={styles.iconText}>AI</Text>
-                    </LinearGradient>
-                    <Text
-                      style={[
-                        styles.messageText,
-                        { backgroundColor: "white", color: "#2D1C1C" },
-                      ]}
-                    >
-                      {item.message}
-                    </Text>
-                  </View>
-                )
-              }
-            />
-          </View>
+          <Messages messages={messages} />
         )}
-        <View style={{ position: "relative" }}>
-          <View style={styles.recordingContainer}>
-            <TextInput
-              onChangeText={setText}
-              value={text}
-              readOnly={switchToChat ? false : true}
-              style={styles.recordingContainerText}
-              placeholder={
-                switchToChat
-                  ? "Message to Tutor..."
-                  : "Live mode - press Start to begin."
-              }
-            ></TextInput>
-            <View style={styles.recordingButtonsContainer}>
-              <View style={styles.chatOptionsContainer}>
-                <Pressable
-                  onPress={() => chatOptionsHandler()}
-                  style={styles.switchChatOptionsContainer}
-                >
-                  <View style={switchToChat ? styles.activeChatOption : {}}>
-                    <AntDesign
-                      name="message"
-                      size={20}
-                      color={switchToChat ? "white" : "#00000066"}
-                    />
-                  </View>
-                  <View style={switchToChat ? {} : styles.activeChatOption}>
-                    <Feather
-                      name="mic"
-                      size={20}
-                      color={!switchToChat ? "white" : "#00000066"}
-                    />
-                  </View>
-                </Pressable>
-              </View>
-              {!recorderState.isRecording && !switchToChat && (
-                <Pressable
-                  onPress={() => recordButtonHandler()}
-                  style={styles.recordingButton}
-                >
-                  <View>
-                    <FontAwesome name="microphone" size={24} color="white" />
-                  </View>
-                  <Text style={styles.recordingButtonText}>Record</Text>
-                </Pressable>
-              )}
-
-              {recorderState.isRecording && !switchToChat && (
-                <Pressable
-                  onPress={() => stopRecordingHandler()}
-                  style={styles.recordingButton}
-                >
-                  <View>
-                    <FontAwesome name="microphone" size={24} color="white" />
-                  </View>
-                  <Text style={styles.recordingButtonText}>Stop</Text>
-                </Pressable>
-              )}
-              {switchToChat && (
-                <Pressable
-                  onPress={() => sendMessageHandler()}
-                  disabled={text.length ? false : true}
-                  style={[
-                    styles.sendMessageButton,
-                    { opacity: text.length ? 1 : 0.7 },
-                  ]}
-                >
-                  <Text style={styles.recordingButtonText}>Send</Text>
-                  <View>
-                    <Octicons name="paper-airplane" size={12} color="white" />
-                  </View>
-                </Pressable>
-              )}
-            </View>
-          </View>
-        </View>
+        <AgentsMenu
+          setText={setText}
+          text={text}
+          switchToChat={switchToChat}
+          chatOptionsHandler={chatOptionsHandler}
+          isRecording={recorderState.isRecording}
+          recordButtonHandler={recordButtonHandler}
+          stopRecordingHandler={stopRecordingHandler}
+          sendMessageHandler={sendMessageHandler}
+        />
       </ImageBackground>
       {showModal && (
         <AgentModal
@@ -384,42 +258,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  messagesContainer: {
-    flex: 1,
-    paddingTop: 16,
-    overflowY: "auto",
-    paddingBottom: 8
-  },
-  userMessageContainer: {
-    flexDirection: "row-reverse",
-    gap: 8,
-    justifyContent: "flex-start",
-  },
-  agentMessageContainer: {
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "flex-start",
-  },
-  messageIcon: {
-    height: 32,
-    width: 32,
-    borderRadius: 999,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconText: {
-    fontWeight: "600",
-    fontSize: 14,
-    color: "white",
-  },
-  messageText: {
-    textAlign: "left",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    fontSize: 14,
-    width: "auto",
-    maxWidth: "78%",
-    borderRadius: 8,
   },
 });
