@@ -138,11 +138,11 @@ export default function Agent() {
             <Text style={styles.recordingStateText}>Live</Text>
           )}
 
-          {!messages.length && switchToChat && (
+          {messages.length < 1 && switchToChat && (
             <Text style={styles.recordingStateText}>No messages yet.</Text>
           )}
         </View>
-        {messages.length && switchToChat && (
+        {messages.length > 0 && switchToChat && (
           <View style={styles.messagesContainer}>
             <FlatList
               data={messages}
