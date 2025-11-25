@@ -1,4 +1,4 @@
-const Profile = [
+const ProfileData = [
   {
     name: "About app",
     heading: "About Us",
@@ -19,6 +19,9 @@ const Profile = [
   },
   {
     name: "Report an Issue",
-    type: "redirect",
+    type: "link",
+    link: "/report/report",
   },
 ];
+
+export default ProfileData;

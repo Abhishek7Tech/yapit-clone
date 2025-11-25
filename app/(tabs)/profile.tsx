@@ -1,12 +1,43 @@
-import { Text, StyleSheet, View, Platform } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  Platform,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../utils/styles";
 import { Image } from "expo-image";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import useBalanceStore from "../store/balanceStore";
+
+import ProfileData from "../utils/profileList";
+import { RelativePathString, router } from "expo-router";
+import { useEffect, useState } from "react";
+import ProfileModal from "../components/modals/profileModal";
 
 const coinUrl = require("@/assets/images/coin.webp");
 export default function ProfileTab() {
+  const [showModal, setShowModal] = useState(false);
+
   const balanceStore = useBalanceStore();
+  useEffect(() => {
+    
+  }, []);
+  const linkButtonHandler = (type: string, link?: RelativePathString) => {
+    if (type === "modal") {
+      setShowModal(true);
+      // Open Modal
+    }
+    if (type === "link" && link) {
+      console.log("CLICKED", link);
+      router.navigate(link);
+    }
+  };
+  const modelHandler = () => {
+    setShowModal(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,6 +79,39 @@ export default function ProfileTab() {
           </View>
         </View>
       </View>
+      <FlatList
+        data={ProfileData}
+        contentContainerStyle={{
+          paddingTop: 50,
+          paddingBottom: 24,
+          backgroundColor: "white",
+        }}
+        renderItem={({ item }) =>
+          item.type === "modal" ? (
+            <Pressable
+              onPress={() => linkButtonHandler(item.type)}
+              style={styles.profileLinkButton}
+            >
+              <Text>{item.name}</Text>
+              <AntDesign name="right" size={16} color="#9CA3AF" />
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={() =>
+                linkButtonHandler(item.type, item.link as RelativePathString)
+              }
+              style={styles.profileLinkButton}
+            >
+              <Text>{item.name}</Text>
+              <AntDesign name="right" size={16} color="#9CA3AF" />
+            </Pressable>
+          )
+        }
+        ItemSeparatorComponent={() => <View></View>}
+      />
+      {showModal && (
+        <ProfileModal modelHandler={modelHandler} showModal={showModal} />
+      )}
     </SafeAreaView>
   );
 }
@@ -112,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 24,
     padding: 10,
-
+    zIndex: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -149,5 +213,21 @@ const styles = StyleSheet.create({
   currencyImg: {
     width: 64,
     height: 64,
+  },
+  profileLinkButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 16,
+    alignItems: "center",
+  },
+  profileTextLink: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: Styles.textSecondary,
+  },
+  profileLinkSeperator: {
+    width: 1,
+    paddingHorizontal: 16,
+    color: Styles.textSecondary,
   },
 });
