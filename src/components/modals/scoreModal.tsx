@@ -114,10 +114,8 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: Styles.backgroundTertiary,
     borderBottomWidth: 3,
     borderRightWidth: 1,
-    // borderColor: "#e4a92d",
   },
   scoreText: {
     fontWeight: "bold",
