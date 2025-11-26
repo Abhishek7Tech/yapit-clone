@@ -11,12 +11,14 @@ import Streak from "../../components/streak/streak";
 import useBalanceStore from "../../store/balanceStore";
 import useNotificationStore from "../../store/thanksNotification";
 import Styles from "../../utils/styles";
+import { router } from "expo-router";
 const coinUrl = require("@/assets/images/coin.webp");
 
 export default function HomeTab() {
   const today = new Date().getDay();
   const [notifications, setNotifications] = useState(false);
   const [lessonList, setLessonList] = useState<LessonsList[]>([]);
+  const [subjectName, setSubjectName] = useState("");
   const quizHandler = () => {
     setNotifications(true);
   };
@@ -40,6 +42,8 @@ export default function HomeTab() {
   useEffect(() => {
     if (lessonList.length) {
       const completedLessons = lessonList.filter((lesson) => lesson.completed);
+      const subjectTeacher = lessonList[completedLessons.length].language;
+      setSubjectName(subjectTeacher);
       balanceStore.setBalance(completedLessons.length || 0);
     }
   }, [lessonList]);
@@ -114,9 +118,9 @@ export default function HomeTab() {
 
           {/* // Talk to Teacher  */}
           <View style={styles.talkToTeacherContainer}>
-            <Pressable style={styles.talkToTeacherButton}>
+            <Pressable onPress={() => router.navigate("/(tabs)/tutor")} style={styles.talkToTeacherButton}>
               <Text style={styles.talkToTeacherButtonText}>
-                Talk to Spanish Teacher
+                Talk to {subjectName} Teacher
               </Text>
             </Pressable>
           </View>

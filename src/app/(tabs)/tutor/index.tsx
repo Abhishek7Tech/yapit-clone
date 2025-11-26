@@ -2,7 +2,6 @@ import TutorModal from "@/src/components/modals/tutorModal";
 import Notifications from "@/src/components/notification/notification";
 import useBalanceStore from "@/src/store/balanceStore";
 import useTabsStore from "@/src/store/tabsStore";
-import useNotificationStore from "@/src/store/thanksNotification";
 import Styles from "@/src/utils/styles";
 import { AntDesign } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -20,7 +19,6 @@ export default function Tutor() {
 
   const [tutorModal, showTutorModal] = useState(true);
   const tabsStore = useTabsStore();
-  const store = useNotificationStore();
   const balanceStore = useBalanceStore();
   useEffect(() => {
     if (tutorModal) {
@@ -43,11 +41,10 @@ export default function Tutor() {
 
     setVerifiyNotification(true);
     showTutorModal(false);
+    balanceStore.setBalance(balanceStore.balance - 1);
     setTimeout(() => {
-      console.log("Pushing...");
       router.push("/(tabs)/tutor/agents");
     }, 2000);
-    // tabsStore.setShowTabs(true);
   };
   return (
     <BlurView
@@ -91,12 +88,7 @@ export default function Tutor() {
           </View>
         </ImageBackground>
       </SafeAreaView>
-      {tutorModal && (
-        <TutorModal
-          balance={balanceStore.balance}
-          spendButtonHandler={spendButtonHandler}
-        />
-      )}
+      {tutorModal && <TutorModal spendButtonHandler={spendButtonHandler} />}
     </BlurView>
   );
 }

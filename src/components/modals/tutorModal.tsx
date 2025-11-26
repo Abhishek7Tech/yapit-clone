@@ -16,10 +16,8 @@ const TutorImg = require("@/assets/images/tutor.png");
 const YapCoin = require("@/assets/images/coin.webp");
 const screenDimensions = Dimensions.get("screen").height;
 export default function TutorModal({
-  balance,
   spendButtonHandler,
 }: {
-  balance: number;
   spendButtonHandler: () => void;
 }) {
   const slideAnim = useRef(new Animated.Value(200)).current;
@@ -65,7 +63,7 @@ export default function TutorModal({
               source={YapCoin}
               accessibilityLabel="Yap coin"
             ></Image>
-            <Text style={styles.tutorButtonText}>Spend {balance} YAP</Text>
+            <Text style={styles.tutorButtonText}>Spend 1 YAP</Text>
           </Pressable>
         </View>
       </Animated.View>

@@ -1,7 +1,6 @@
 import Messages from "@/src/components/chats/chats";
 import AgentsMenu from "@/src/components/menus/agents";
 import AgentModal from "@/src/components/modals/agentModal";
-import useBalanceStore from "@/src/store/balanceStore";
 import useTabsStore from "@/src/store/tabsStore";
 import { Chat } from "@/src/types/types";
 import {
@@ -35,7 +34,6 @@ export default function Agent() {
   const [messages, setMessages] = useState<Chat[] | []>([]);
   const [showModal, setShowModal] = useState(false);
   const [timer, setTimer] = useState({ minutes: 2, seconds: 0 });
-  const balanceStore = useBalanceStore();
 
   useEffect(() => {
     tabStore.setShowTabs(true);
@@ -62,7 +60,6 @@ export default function Agent() {
       if (remainingRef.current <= 0 && intervalRef.current !== null) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
-        balanceStore.setBalance(balanceStore.balance - 1);
         router.navigate("/(tabs)/tutor");
       }
     }, 1000) as unknown as number;
