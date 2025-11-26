@@ -3,11 +3,12 @@ import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import {
-    Animated,
-    Pressable,
-    StyleSheet,
-    Text,
-    View
+  Animated,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 export default function RecordingMenu({
@@ -78,7 +79,17 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingTop: 12,
-    boxShadow: "0 -6px 24px rgba(0, 0, 0, 0.08)",
+    shadowColor: "rgba(0, 0, 0, 0.08)",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 
   recordingWall: {

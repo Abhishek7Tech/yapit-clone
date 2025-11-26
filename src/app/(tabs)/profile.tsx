@@ -214,17 +214,15 @@ const styles = StyleSheet.create({
     borderColor: "#e3ded3",
     borderBottomWidth: 3,
     borderRightWidth: 1,
-    boxShadow:
-      "0 1px 3px 0 rgba(0, 0, 0, 0.1),0 1px 2px -1px rgba(0, 0, 0, 0.1)",
-    ...Platform.select({
+     ...Platform.select({
       ios: {
-        shadowColor: "#0000001a",
+        shadowColor: '#0000001a',
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.8,
-        shadowBRadius: 1,
       },
       android: {
-        elevation: 5,
+        elevation: 4,
       },
     }),
   },

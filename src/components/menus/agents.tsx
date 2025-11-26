@@ -3,7 +3,14 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Octicons from "@expo/vector-icons/Octicons";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function AgentsMenu({
   setText,
@@ -111,8 +118,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     marginBottom: 24,
-    boxShadow:
-      "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    shadowColor: "#0000001a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
     alignContent: "flex-end",
     gap: 12,
   },
@@ -143,8 +159,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 4,
     gap: 8,
-    boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    shadowColor: "#0000001a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 
   activeChatOption: {

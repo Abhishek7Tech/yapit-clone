@@ -3,115 +3,130 @@ import Styles from "@/src/utils/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, router } from "expo-router";
 import {
-    FlatList,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  FlatList,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
+export default function Lessons({ lessonList }: { lessonList: LessonsList[] }) {
+  return (
+    <View>
+      <View style={styles.lessonsHeadingContainer}>
+        <Text style={styles.lessonsHeading}>Lessons</Text>
+        <Link style={styles.allLessons} href={"/lessons/allLessons"}>
+          See all
+        </Link>
+      </View>
 
-export default function Lessons({lessonList}: {lessonList:LessonsList[]}) {
-
-    return (
-         <View>
-          <View style={styles.lessonsHeadingContainer}>
-            <Text style={styles.lessonsHeading}>Lessons</Text>
-            <Link style={styles.allLessons} href={"/lessons/allLessons"}>
-              See all
-            </Link>
-          </View>
-
-          <View style={styles.lessonsListContainer}>
-            <FlatList
-              data={lessonList}
-              horizontal={true}
-              contentContainerStyle={{
-                overflowX: "auto",
-                paddingHorizontal: 16,
-                gap: 16,
-                marginInline: -16,
-                paddingBottom: 10,
-              }}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) =>
-                item.completed ? (
-                  <View
-                    style={[
-                      styles.lessonsContainer,
-                      {
-                        backgroundColor: "#EF4444",
-                        boxShadow: "0 3px #d12a2c",
+      <View style={styles.lessonsListContainer}>
+        <FlatList
+          data={lessonList}
+          horizontal={true}
+          contentContainerStyle={{
+            overflowX: "auto",
+            paddingHorizontal: 16,
+            gap: 16,
+            marginInline: -16,
+            paddingBottom: 10,
+          }}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) =>
+            item.completed ? (
+              <View
+                style={[
+                  styles.lessonsContainer,
+                  {
+                    backgroundColor: "#EF4444",
+                    shadowColor: "#d12a2c",
+                    ...Platform.select({
+                      ios: {
+                        shadowOpacity: 0.1,
+                        shadowRadius: 3,
+                        shadowOffset: { width: 4, height: 4 },
                       },
-                    ]}
-                  >
-                    <Ionicons
-                      style={{ position: "absolute", top: 8, left: 12 }}
-                      name="checkmark-circle-sharp"
-                      size={20}
-                      color={Styles.backgroundTertiary}
-                    />
-                    <Pressable
-                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                      disabled={item.completed}
-                    >
-                      <View style={{ paddingBottom: 12 }}>
-                        <Text style={[styles.lessonText, { color: "white" }]}>
-                          Lesson {item.lesson}
-                        </Text>
-                        <Text style={[styles.groupText, { color: "white" }]}>
-                          Group {item.group}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  </View>
-                ) : (
-                  <View
-                    style={[
-                      styles.lessonsContainer,
-                      {
-                        backgroundColor: item.disabled ? "#e5e7eb" : "white",
-                        boxShadow: `0 3px ${
-                          item.disabled ? "#e2ddd3" : "#d1d5db"
-                        }`,
+                      android: {
+                        elevation: 4,
                       },
-                    ]}
-                  >
-                    <Pressable
-                      onPress={() => router.navigate(`/lesson/${item.lesson}`)}
-                      disabled={item.disabled}
-                    >
-                      <View style={{ paddingBottom: 12 }}>
-                        <Text
-                          style={[
-                            styles.lessonText,
-                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                          ]}
-                        >
-                          Lesson {item.lesson}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.groupText,
-                            { color: item.disabled ? "#6b7280" : "#2d1c1c" },
-                          ]}
-                        >
-                          Group {item.group}
-                        </Text>
-                      </View>
-                    </Pressable>
+                    }),
+                  },
+                ]}
+              >
+                <Ionicons
+                  style={{ position: "absolute", top: 8, left: 12 }}
+                  name="checkmark-circle-sharp"
+                  size={20}
+                  color={Styles.backgroundTertiary}
+                />
+                <Pressable
+                  onPress={() => router.navigate(`/lesson/${item.lesson}`)}
+                  disabled={item.completed}
+                >
+                  <View style={{ paddingBottom: 12 }}>
+                    <Text style={[styles.lessonText, { color: "white" }]}>
+                      Lesson {item.lesson}
+                    </Text>
+                    <Text style={[styles.groupText, { color: "white" }]}>
+                      Group {item.group}
+                    </Text>
                   </View>
-                )
-              }
-            />
-          </View>
-        </View>
-
-    )
+                </Pressable>
+              </View>
+            ) : (
+              <View
+                style={[
+                  styles.lessonsContainer,
+                  {
+                    backgroundColor: item.disabled ? "#e5e7eb" : "white",
+                    shadowColor: item.disabled ? "#e2ddd3" : "#d1d5db",
+                    ...Platform.select({
+                      ios: {
+                        shadowOpacity: 0.1,
+                        shadowRadius: 3,
+                        shadowOffset: { width: 0, height: 1 },
+                      },
+                      android: {
+                        elevation: 4,
+                      },
+                    }),
+                  },
+                ]}
+              >
+                <Pressable
+                  onPress={() => router.navigate(`/lesson/${item.lesson}`)}
+                  disabled={item.disabled}
+                >
+                  <View style={{ paddingBottom: 12 }}>
+                    <Text
+                      style={[
+                        styles.lessonText,
+                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                      ]}
+                    >
+                      Lesson {item.lesson}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.groupText,
+                        { color: item.disabled ? "#6b7280" : "#2d1c1c" },
+                      ]}
+                    >
+                      Group {item.group}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            )
+          }
+        />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-     
   lessonsHeadingContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -152,4 +167,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flexWrap: "wrap",
   },
-})
+});

@@ -1,7 +1,1 @@
-[
-  { "group": 1, "lesson": 1, "disabled": false, "completed": true, "langauage": "English" },
-  { "group": 2, "lesson": 2, "disabled": false, "completed": false, "langauage": "Spanish" },
-  { "group": 3, "lesson": 3, "disabled": true, "completed": false, "langauage": "Hindi" },
-  { "group": 4, "lesson": 4, "disabled": true, "completed": false, "langauage": "French" },
-  { "group": 5, "lesson": 5, "disabled": true, "completed": false, "langauage": "German" }
-]
+[{"group":1,"lesson":1,"disabled":false,"completed":true,"langauage":"English"},{"group":2,"lesson":2,"disabled":false,"completed":true,"langauage":"Spanish"},{"group":3,"lesson":3,"disabled":false,"completed":false,"langauage":"Hindi"},{"group":4,"lesson":4,"disabled":true,"completed":false,"langauage":"French"},{"group":5,"lesson":5,"disabled":true,"completed":false,"langauage":"German"}]

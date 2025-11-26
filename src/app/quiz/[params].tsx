@@ -2,22 +2,23 @@ import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
-    AudioModule,
-    RecordingPresets,
-    setAudioModeAsync,
-    useAudioPlayer,
-    useAudioPlayerStatus,
-    useAudioRecorder,
-    useAudioRecorderState,
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioPlayer,
+  useAudioPlayerStatus,
+  useAudioRecorder,
+  useAudioRecorderState,
 } from "expo-audio";
 import { router, useLocalSearchParams } from "expo-router";
 import {
-    Animated,
-    Pressable,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../../utils/styles";
@@ -236,28 +237,26 @@ function VocabularyLessons() {
       intensity={submitNotification ? 90 : 0}
     >
       {submitNotification && (
-        <View style={{ top: StatusBar.currentHeight, marginHorizontal: 16 }}>
-          <Notifications
-            notification={notifications}
-            handleNotifications={setNotifications}
-            message={"Evaluating submissions..."}
-            icon="submit"
-          />
-        </View>
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={"Evaluating submissions..."}
+          icon="submit"
+        />
+      )}
+      {notifications && (
+        <Notifications
+          notification={notifications}
+          handleNotifications={setNotifications}
+          message={"Permission denied"}
+          icon="notification"
+        />
       )}
       <SafeAreaView
         style={[styles.container, submitNotification ? { zIndex: -100 } : {}]}
       >
         {/* Header */}
         <View style={{ paddingHorizontal: 16 }}>
-          {notifications && (
-            <Notifications
-              notification={notifications}
-              handleNotifications={setNotifications}
-              message={"Permission denied"}
-              icon="notification"
-            />
-          )}
           <View style={styles.headerContainer}>
             <View>
               <Pressable onPress={() => router.navigate("/home")}>
@@ -454,7 +453,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#EF4444",
-    boxShadow: "1px 2px #bf373a",
+    shadowColor: "#bf373a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.5,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 
   recordAndResultContainer: {
@@ -483,8 +492,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     borderRightWidth: 1,
     borderColor: "#ebe6df",
-    boxShadow:
-      "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+    shadowColor: "#0000001a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   retryButtonText: {
     color: "black",

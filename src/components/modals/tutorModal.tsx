@@ -3,12 +3,13 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
-    Animated,
-    Dimensions,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 const TutorImg = require("@/assets/images/tutor.png");
@@ -32,7 +33,7 @@ export default function TutorModal({
   const modalHandler = () => {
     router.back();
   };
- 
+
   return (
     <SafeAreaView style={styles.modalContainer}>
       <Pressable onPress={() => modalHandler()} style={{ flex: 1 }}>
@@ -92,7 +93,16 @@ const styles = StyleSheet.create({
     backgroundColor: Styles.backgroundColor,
     minHeight: screenDimensions * 0.2,
     shadowColor: "#0000001a",
-    boxShadow: "0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   modalHeader: {
     flexDirection: "row",

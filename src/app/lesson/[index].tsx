@@ -1,6 +1,13 @@
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Styles from "../../utils/styles";
 const YappyImg = require("@/assets/images/yappy.webp");
@@ -66,8 +73,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 24,
     backgroundColor: Styles.backgroundSecondary,
-    boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0000001a",
+        shadowOpacity: 0.5,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   buttonText: {
     color: "white",

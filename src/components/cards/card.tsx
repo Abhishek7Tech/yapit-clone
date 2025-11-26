@@ -4,18 +4,19 @@ import Foundation from "@expo/vector-icons/Foundation";
 import { speak } from "expo-speech";
 import { useRef, useState } from "react";
 import {
-    Animated,
-    Easing,
-    Pressable,
-    StyleSheet,
-    Text,
-    View
+  Animated,
+  Easing,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
-export default function Cards({questions}: {questions: Questions}) {
-      const flip = useRef(new Animated.Value(0)).current;
-      const [flipped, setFlipped] = useState(false);
-      const flipCard = () => {
+export default function Cards({ questions }: { questions: Questions }) {
+  const flip = useRef(new Animated.Value(0)).current;
+  const [flipped, setFlipped] = useState(false);
+  const flipCard = () => {
     Animated.timing(flip, {
       toValue: flipped ? 0 : 180,
       duration: 400,
@@ -23,7 +24,7 @@ export default function Cards({questions}: {questions: Questions}) {
       useNativeDriver: true,
     }).start(() => setFlipped(!flipped));
   };
-      const flipBack = flip.interpolate({
+  const flipBack = flip.interpolate({
     inputRange: [0, 180],
     outputRange: ["360deg", "180deg"],
   });
@@ -34,8 +35,8 @@ export default function Cards({questions}: {questions: Questions}) {
   });
 
   const speechHandler = (term: string) => {
-      speak(term);
-    };
+    speak(term);
+  };
 
   return (
     <>
@@ -148,7 +149,17 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
     borderRadius: 28,
-    boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
+    shadowColor: "rgba(0,0,0,0.08)",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   instructionContainer: {
     flexDirection: "row",
@@ -181,9 +192,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 9999,
     backgroundColor: "#FFC12E",
-    boxShadow: "0 2px 2px 1px #E0A924",
     shadowColor: "#E0A924",
-    shadowOffset: { width: 4, height: 4 },
+      ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 4, height: 4 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
     marginBottom: 20,
     marginTop: 4,
     marginRight: 20,

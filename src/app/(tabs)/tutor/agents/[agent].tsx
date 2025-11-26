@@ -5,19 +5,22 @@ import useBalanceStore from "@/src/store/balanceStore";
 import useTabsStore from "@/src/store/tabsStore";
 import { Chat } from "@/src/types/types";
 import {
-    AudioModule,
-    RecordingPresets,
-    setAudioModeAsync,
-    useAudioRecorder,
-    useAudioRecorderState
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
 } from "expo-audio";
 import { router, useLocalSearchParams } from "expo-router";
 import { speak } from "expo-speech";
 import { useEffect, useRef, useState } from "react";
 import {
-    ImageBackground, KeyboardAvoidingView,
-    Platform, StyleSheet,
-    Text, View
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import Styles from "../../../../utils/styles";
 const TutorImg = require("@/assets/images/tutor.png");
@@ -44,7 +47,7 @@ export default function Agent() {
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    remainingRef.current = 10;
+    remainingRef.current = 180;
     setTimer({
       minutes: Math.floor(remainingRef.current / 60),
       seconds: remainingRef.current % 60,
@@ -199,7 +202,17 @@ const styles = StyleSheet.create({
   sessionTimerContainer: {
     backgroundColor: "#fdfbfa",
     paddingVertical: 4,
-    boxShadow: "0 1px 3px 0 var(#0000001a),0 1px 2px -1px var(#0000001a)",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0000001a",
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 1, height: 3 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   sessionTimerText: {
     color: Styles.textSecondary,
@@ -219,8 +232,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     marginBottom: 24,
-    boxShadow:
-      "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#0000001a",
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
     alignContent: "flex-end",
     gap: 12,
   },
@@ -251,8 +273,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 4,
     gap: 8,
-    boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+   ...Platform.select({
+      ios: {
+        shadowColor: '#0000001a',
+        shadowOpacity: 0.5,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 
   activeChatOption: {

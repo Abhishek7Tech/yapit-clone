@@ -1,10 +1,11 @@
 import { Feather, FontAwesome, Fontisto, Ionicons } from "@expo/vector-icons";
 import {
-    Animated,
-    Pressable,
-    StatusBar,
-    StyleSheet,
-    Text
+  Animated,
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
 } from "react-native";
 
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
@@ -152,8 +153,17 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginVertical: 8,
     top: StatusBar.currentHeight,
-    boxShadow:
-      "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    shadowColor: "#0000001a",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   notificationsText: {
     fontSize: 14,

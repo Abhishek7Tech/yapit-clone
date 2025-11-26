@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Platform,
     Pressable,
     StatusBar,
     StyleSheet,
@@ -178,8 +179,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 24,
     backgroundColor: Styles.backgroundSecondary,
-    boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      shadowColor: '#0000001a',
+         ...Platform.select({
+          ios: {
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
+            shadowOffset: { width: 0, height: 1 },
+          },
+          android: {
+            elevation: 4,
+          },
+        }),
   },
   buttonText: {
     color: "white",
