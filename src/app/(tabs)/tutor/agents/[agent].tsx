@@ -120,6 +120,7 @@ export default function Agent() {
           message: "Agents are not integrated yet. Please stop the chat.",
         },
       ]);
+      setText("");
       return;
     }
     setMessages([...messages, { sender: "user", message: text }]);
